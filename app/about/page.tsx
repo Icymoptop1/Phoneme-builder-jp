@@ -97,32 +97,6 @@ export default function AboutPage() {
 
       </div>
 
-      <div className="content-card video-card">
-
-        <h3>
-          Assessment Video
-        </h3>
-
-        <p>
-          This video demonstrates how to use the
-          website and generate the classroom activities.
-        </p>
-
-        <div className="video-placeholder">
-
-          <p>
-            VIDEO PLACEHOLDER
-          </p>
-
-          <small>
-            Replace this section with your assessment
-            video.
-          </small>
-
-        </div>
-
-      </div>
-
     </section>
   );
 }
