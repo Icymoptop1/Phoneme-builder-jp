@@ -20,9 +20,13 @@ export default function Navbar() {
       ? "nav-link active"
       : "nav-link";
 
+  const menuActive = (path: string) =>
+    pathname === path
+      ? "menu-link active"
+      : "menu-link";
+
   return (
     <nav className="navbar">
-
       <Link
         href="/"
         className="nav-brand"
@@ -33,10 +37,10 @@ export default function Navbar() {
       </Link>
 
       <div className="desktop-nav">
-
         <Link
           href="/"
           className={active("/")}
+          onClick={closeMenu}
         >
           Home
         </Link>
@@ -44,6 +48,7 @@ export default function Navbar() {
         <Link
           href="/wordle"
           className={active("/wordle")}
+          onClick={closeMenu}
         >
           Wordle
         </Link>
@@ -51,6 +56,7 @@ export default function Navbar() {
         <Link
           href="/word-search"
           className={active("/word-search")}
+          onClick={closeMenu}
         >
           Word Search
         </Link>
@@ -60,29 +66,57 @@ export default function Navbar() {
           className="theme-toggle"
           onClick={toggleTheme}
           title="Toggle theme"
+          aria-label="Toggle light and dark theme"
         >
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
 
         <div className="menu-wrapper">
-
           <button
             type="button"
             className="hamburger-button"
             onClick={() =>
-              setMenuOpen(!menuOpen)
+              setMenuOpen((open) => !open)
             }
-            aria-label="Open menu"
+            aria-label="Open navigation menu"
             aria-expanded={menuOpen}
+            aria-controls="navigation-menu"
           >
             ☰
           </button>
 
           {menuOpen && (
-            <div className="hamburger-menu">
+            <div
+              id="navigation-menu"
+              className="hamburger-menu"
+            >
+              <Link
+                href="/words"
+                className={menuActive("/words")}
+                onClick={closeMenu}
+              >
+                Manage Words
+              </Link>
+
+              <Link
+                href="/word-lists"
+                className={menuActive("/word-lists")}
+                onClick={closeMenu}
+              >
+                Manage Word Lists
+              </Link>
+
+              <Link
+                href="/activities"
+                className={menuActive("/activities")}
+                onClick={closeMenu}
+              >
+                Manage Activities
+              </Link>
 
               <Link
                 href="/about"
+                className={menuActive("/about")}
                 onClick={closeMenu}
               >
                 About
@@ -90,18 +124,15 @@ export default function Navbar() {
 
               <Link
                 href="/settings"
+                className={menuActive("/settings")}
                 onClick={closeMenu}
               >
                 Settings
               </Link>
-
             </div>
           )}
-
         </div>
-
       </div>
-
     </nav>
   );
 }
