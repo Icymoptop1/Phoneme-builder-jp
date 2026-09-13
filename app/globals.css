@@ -1158,6 +1158,112 @@ button:disabled {
   margin-top: 20px;
 }
 
+/* ACTIVITY MANAGEMENT */
+
+.activity-management-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.activity-management-header {
+  margin-bottom: 2rem;
+}
+
+.activity-form-section,
+.saved-activities-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.activity-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-form > label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  font-weight: 600;
+}
+
+.activity-form input[type="text"],
+.activity-form input[type="number"],
+.activity-form select {
+  padding: 0.75rem;
+
+  background: var(--surface);
+  color: var(--text);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.activity-checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+}
+
+.activity-form-actions,
+.saved-activity-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.activity-form-actions button,
+.saved-activity-actions button {
+  padding: 0.65rem 1rem;
+
+  background: var(--surface-secondary);
+  color: var(--text);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.activity-form-actions button:hover,
+.saved-activity-actions button:hover {
+  border-color: var(--focus);
+}
+
+.activity-message {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.saved-activities-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(260px, 1fr));
+
+  gap: 1rem;
+}
+
+.saved-activity-card {
+  padding: 1.25rem;
+
+  background: var(--surface-secondary);
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.saved-activity-card h3 {
+  margin-top: 0;
+}
+
 /* 
    14. WORD SEARCH
    Word list, grid, selection and feedback
@@ -1792,6 +1898,19 @@ input:focus-visible {
 
 /* Mobile */
 @media (max-width: 600px) {
+
+.activity-management-page {
+  padding: 1rem;
+}
+
+.activity-form-section,
+.saved-activities-section {
+  padding: 1rem;
+}
+
+.saved-activities-grid {
+  grid-template-columns: 1fr;
+}
 
 .word-list-management-page {
   padding: 1rem;
