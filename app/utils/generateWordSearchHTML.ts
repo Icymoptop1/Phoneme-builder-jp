@@ -5,18 +5,24 @@ import type {
 interface WordSearchHTMLSettings {
   puzzle: WordSearchPuzzle;
   size: number;
+  theme?: string;
+  difficulty?: "EASY" | "MEDIUM" | "HARD";
 }
 
 export function generateWordSearchHTML({
   puzzle,
   size,
+  theme = "light",
+  difficulty = "MEDIUM",
 }: WordSearchHTMLSettings): void {
+  const initialTheme =
+    theme === "dark" ? "dark" : "light";
   const puzzleJSON =
     JSON.stringify(puzzle);
 
   const html = `
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="${initialTheme}">
 
 <head>
   <meta charset="UTF-8" />
@@ -237,8 +243,8 @@ export function generateWordSearchHTML({
         grid;
 
       grid-template-columns:
-        minmax(260px, 0.7fr)
-        minmax(450px, 1.3fr);
+        minmax(240px, 0.65fr)
+        minmax(0, 1.35fr);
 
       gap:
         25px;
@@ -430,13 +436,16 @@ export function generateWordSearchHTML({
         6px;
 
       width:
-        100%;
+        min(100%, 720px);
 
       max-width:
-        720px;
+        100%;
 
       margin:
         25px auto;
+
+      overflow:
+        hidden;
     }
 
     .search-cell {
@@ -707,6 +716,34 @@ export function generateWordSearchHTML({
     }
 
     @media (
+      max-width: 760px
+    ) {
+      .page {
+        width: min(96%, 1100px);
+      }
+
+      .panel {
+        padding: 16px;
+        min-width: 0;
+      }
+
+      .word-search-grid {
+        gap: 4px;
+        margin: 18px auto;
+      }
+
+      .search-cell {
+        border-radius: 5px;
+        font-size:
+          clamp(
+            0.48rem,
+            2vw,
+            0.8rem
+          );
+      }
+    }
+
+    @media (
       max-width: 600px
     ) {
       .header-content {
@@ -771,7 +808,7 @@ export function generateWordSearchHTML({
   <div class="page-header">
 
     <span class="badge">
-      PHONEME WORD SEARCH
+      PHONEME WORD SEARCH · ${difficulty}
     </span>
 
     <h2>
@@ -830,6 +867,12 @@ export function generateWordSearchHTML({
 
         <p>
           3. Press Check Selection.
+        </p>
+
+        <p>
+          Keyboard: use the arrow keys to move
+          through the grid and Enter or Space
+          to select a cell.
         </p>
 
         <p>
@@ -1132,10 +1175,26 @@ export function generateWordSearchHTML({
               "Phoneme " +
               phoneme;
 
+            button.dataset.row =
+              String(rowIndex);
+
+            button.dataset.col =
+              String(colIndex);
+
             button.addEventListener(
               "click",
               () =>
                 selectCell(
+                  rowIndex,
+                  colIndex
+                )
+            );
+
+            button.addEventListener(
+              "keydown",
+              (event) =>
+                handleGridKeydown(
+                  event,
                   rowIndex,
                   colIndex
                 )
@@ -1148,6 +1207,83 @@ export function generateWordSearchHTML({
         );
       }
     );
+  }
+
+
+  function focusGridCell(
+    row,
+    col
+  ) {
+    const safeRow =
+      Math.max(
+        0,
+        Math.min(
+          puzzle.grid.length - 1,
+          row
+        )
+      );
+
+    const safeCol =
+      Math.max(
+        0,
+        Math.min(
+          puzzle.grid[0].length - 1,
+          col
+        )
+      );
+
+    const target =
+      gridElement.querySelector(
+        '[data-cell="' +
+        cellKey(
+          safeRow,
+          safeCol
+        ) +
+        '"]'
+      );
+
+    if (target) {
+      target.focus();
+    }
+  }
+
+
+  function handleGridKeydown(
+    event,
+    row,
+    col
+  ) {
+    if (
+      event.key ===
+        "ArrowUp" ||
+      event.key ===
+        "ArrowDown" ||
+      event.key ===
+        "ArrowLeft" ||
+      event.key ===
+        "ArrowRight"
+    ) {
+      event.preventDefault();
+
+      const rowChange =
+        event.key === "ArrowUp"
+          ? -1
+          : event.key === "ArrowDown"
+            ? 1
+            : 0;
+
+      const colChange =
+        event.key === "ArrowLeft"
+          ? -1
+          : event.key === "ArrowRight"
+            ? 1
+            : 0;
+
+      focusGridCell(
+        row + rowChange,
+        col + colChange
+      );
+    }
   }
 
 
@@ -1594,7 +1730,7 @@ export function generateWordSearchHTML({
       );
     } else {
       setTheme(
-        "light"
+        "${initialTheme}"
       );
     }
   }

@@ -888,6 +888,8 @@ export default function WordSearchPage() {
             generateWordSearchHTML({
               puzzle,
               size,
+              theme: activityTheme,
+              difficulty,
             })
           }
         >
