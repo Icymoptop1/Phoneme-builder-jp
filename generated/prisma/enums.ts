@@ -9,7 +9,18 @@
 * 🟢 You can import this file directly.
 */
 
+export const ActivityType = {
+  WORDLE: 'WORDLE',
+  WORD_SEARCH: 'WORD_SEARCH'
+} as const
+
+export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const Difficulty = {
+  EASY: 'EASY',
+  MEDIUM: 'MEDIUM',
+  HARD: 'HARD'
+} as const
+
+export type Difficulty = (typeof Difficulty)[keyof typeof Difficulty]

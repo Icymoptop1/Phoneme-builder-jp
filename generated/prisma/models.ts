@@ -11,4 +11,5 @@
 export type * from './models/Word'
 export type * from './models/WordList'
 export type * from './models/WordListWord'
+export type * from './models/Activity'
 export type * from './commonInputTypes'

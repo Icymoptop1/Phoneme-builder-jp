@@ -56,3 +56,8 @@ export type WordList = Prisma.WordListModel
  * 
  */
 export type WordListWord = Prisma.WordListWordModel
+/**
+ * Model Activity
+ * 
+ */
+export type Activity = Prisma.ActivityModel

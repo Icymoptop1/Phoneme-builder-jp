@@ -26,6 +26,7 @@ model WordList {
   updatedAt   DateTime       @updatedAt
 
   words       WordListWord[]
+  Activities  Activity[]
 }
 
 model WordListWord {
@@ -38,4 +39,32 @@ model WordListWord {
   wordListId Int
 
   @@unique([wordId, wordListId])
+}
+
+enum ActivityType {
+  WORDLE
+  WORD_SEARCH
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model Activity {
+  id           Int          @id @default(autoincrement())
+  name         String
+  type         ActivityType
+  difficulty   Difficulty
+  maxAttempts  Int?
+  gridSize     Int?
+  hintsEnabled Boolean      @default(true)
+  theme        String       @default("light")
+  settings     String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  wordList     WordList     @relation(fields: [wordListId], references: [id], onDelete: Cascade)
+  wordListId   Int
 }

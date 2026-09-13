@@ -217,6 +217,7 @@ export type WordListWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"WordList"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WordList"> | Date | string
   words?: Prisma.WordListWordListRelationFilter
+  Activities?: Prisma.ActivityListRelationFilter
 }
 
 export type WordListOrderByWithRelationInput = {
@@ -226,6 +227,7 @@ export type WordListOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   words?: Prisma.WordListWordOrderByRelationAggregateInput
+  Activities?: Prisma.ActivityOrderByRelationAggregateInput
 }
 
 export type WordListWhereUniqueInput = Prisma.AtLeast<{
@@ -238,6 +240,7 @@ export type WordListWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"WordList"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WordList"> | Date | string
   words?: Prisma.WordListWordListRelationFilter
+  Activities?: Prisma.ActivityListRelationFilter
 }, "id">
 
 export type WordListOrderByWithAggregationInput = {
@@ -270,6 +273,7 @@ export type WordListCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   words?: Prisma.WordListWordCreateNestedManyWithoutWordListInput
+  Activities?: Prisma.ActivityCreateNestedManyWithoutWordListInput
 }
 
 export type WordListUncheckedCreateInput = {
@@ -279,6 +283,7 @@ export type WordListUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   words?: Prisma.WordListWordUncheckedCreateNestedManyWithoutWordListInput
+  Activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutWordListInput
 }
 
 export type WordListUpdateInput = {
@@ -287,6 +292,7 @@ export type WordListUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   words?: Prisma.WordListWordUpdateManyWithoutWordListNestedInput
+  Activities?: Prisma.ActivityUpdateManyWithoutWordListNestedInput
 }
 
 export type WordListUncheckedUpdateInput = {
@@ -296,6 +302,7 @@ export type WordListUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   words?: Prisma.WordListWordUncheckedUpdateManyWithoutWordListNestedInput
+  Activities?: Prisma.ActivityUncheckedUpdateManyWithoutWordListNestedInput
 }
 
 export type WordListCreateManyInput = {
@@ -372,11 +379,26 @@ export type WordListUpdateOneRequiredWithoutWordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WordListUpdateToOneWithWhereWithoutWordsInput, Prisma.WordListUpdateWithoutWordsInput>, Prisma.WordListUncheckedUpdateWithoutWordsInput>
 }
 
+export type WordListCreateNestedOneWithoutActivitiesInput = {
+  create?: Prisma.XOR<Prisma.WordListCreateWithoutActivitiesInput, Prisma.WordListUncheckedCreateWithoutActivitiesInput>
+  connectOrCreate?: Prisma.WordListCreateOrConnectWithoutActivitiesInput
+  connect?: Prisma.WordListWhereUniqueInput
+}
+
+export type WordListUpdateOneRequiredWithoutActivitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.WordListCreateWithoutActivitiesInput, Prisma.WordListUncheckedCreateWithoutActivitiesInput>
+  connectOrCreate?: Prisma.WordListCreateOrConnectWithoutActivitiesInput
+  upsert?: Prisma.WordListUpsertWithoutActivitiesInput
+  connect?: Prisma.WordListWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WordListUpdateToOneWithWhereWithoutActivitiesInput, Prisma.WordListUpdateWithoutActivitiesInput>, Prisma.WordListUncheckedUpdateWithoutActivitiesInput>
+}
+
 export type WordListCreateWithoutWordsInput = {
   name: string
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  Activities?: Prisma.ActivityCreateNestedManyWithoutWordListInput
 }
 
 export type WordListUncheckedCreateWithoutWordsInput = {
@@ -385,6 +407,7 @@ export type WordListUncheckedCreateWithoutWordsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  Activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutWordListInput
 }
 
 export type WordListCreateOrConnectWithoutWordsInput = {
@@ -408,6 +431,7 @@ export type WordListUpdateWithoutWordsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Activities?: Prisma.ActivityUpdateManyWithoutWordListNestedInput
 }
 
 export type WordListUncheckedUpdateWithoutWordsInput = {
@@ -416,6 +440,57 @@ export type WordListUncheckedUpdateWithoutWordsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Activities?: Prisma.ActivityUncheckedUpdateManyWithoutWordListNestedInput
+}
+
+export type WordListCreateWithoutActivitiesInput = {
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  words?: Prisma.WordListWordCreateNestedManyWithoutWordListInput
+}
+
+export type WordListUncheckedCreateWithoutActivitiesInput = {
+  id?: number
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  words?: Prisma.WordListWordUncheckedCreateNestedManyWithoutWordListInput
+}
+
+export type WordListCreateOrConnectWithoutActivitiesInput = {
+  where: Prisma.WordListWhereUniqueInput
+  create: Prisma.XOR<Prisma.WordListCreateWithoutActivitiesInput, Prisma.WordListUncheckedCreateWithoutActivitiesInput>
+}
+
+export type WordListUpsertWithoutActivitiesInput = {
+  update: Prisma.XOR<Prisma.WordListUpdateWithoutActivitiesInput, Prisma.WordListUncheckedUpdateWithoutActivitiesInput>
+  create: Prisma.XOR<Prisma.WordListCreateWithoutActivitiesInput, Prisma.WordListUncheckedCreateWithoutActivitiesInput>
+  where?: Prisma.WordListWhereInput
+}
+
+export type WordListUpdateToOneWithWhereWithoutActivitiesInput = {
+  where?: Prisma.WordListWhereInput
+  data: Prisma.XOR<Prisma.WordListUpdateWithoutActivitiesInput, Prisma.WordListUncheckedUpdateWithoutActivitiesInput>
+}
+
+export type WordListUpdateWithoutActivitiesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  words?: Prisma.WordListWordUpdateManyWithoutWordListNestedInput
+}
+
+export type WordListUncheckedUpdateWithoutActivitiesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  words?: Prisma.WordListWordUncheckedUpdateManyWithoutWordListNestedInput
 }
 
 
@@ -425,10 +500,12 @@ export type WordListUncheckedUpdateWithoutWordsInput = {
 
 export type WordListCountOutputType = {
   words: number
+  Activities: number
 }
 
 export type WordListCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   words?: boolean | WordListCountOutputTypeCountWordsArgs
+  Activities?: boolean | WordListCountOutputTypeCountActivitiesArgs
 }
 
 /**
@@ -448,6 +525,13 @@ export type WordListCountOutputTypeCountWordsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.WordListWordWhereInput
 }
 
+/**
+ * WordListCountOutputType without action
+ */
+export type WordListCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityWhereInput
+}
+
 
 export type WordListSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -456,6 +540,7 @@ export type WordListSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   words?: boolean | Prisma.WordList$wordsArgs<ExtArgs>
+  Activities?: boolean | Prisma.WordList$ActivitiesArgs<ExtArgs>
   _count?: boolean | Prisma.WordListCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wordList"]>
 
@@ -486,6 +571,7 @@ export type WordListSelectScalar = {
 export type WordListOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["wordList"]>
 export type WordListInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   words?: boolean | Prisma.WordList$wordsArgs<ExtArgs>
+  Activities?: boolean | Prisma.WordList$ActivitiesArgs<ExtArgs>
   _count?: boolean | Prisma.WordListCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WordListIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -495,6 +581,7 @@ export type $WordListPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "WordList"
   objects: {
     words: Prisma.$WordListWordPayload<ExtArgs>[]
+    Activities: Prisma.$ActivityPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -897,6 +984,7 @@ readonly fields: WordListFieldRefs;
 export interface Prisma__WordListClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   words<T extends Prisma.WordList$wordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WordList$wordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WordListWordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Activities<T extends Prisma.WordList$ActivitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WordList$ActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1343,6 +1431,30 @@ export type WordList$wordsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.WordListWordScalarFieldEnum | Prisma.WordListWordScalarFieldEnum[]
+}
+
+/**
+ * WordList.Activities
+ */
+export type WordList$ActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Activity
+   */
+  select?: Prisma.ActivitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Activity
+   */
+  omit?: Prisma.ActivityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityInclude<ExtArgs> | null
+  where?: Prisma.ActivityWhereInput
+  orderBy?: Prisma.ActivityOrderByWithRelationInput | Prisma.ActivityOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
 }
 
 /**
