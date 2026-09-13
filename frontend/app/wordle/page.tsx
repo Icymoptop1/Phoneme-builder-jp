@@ -6,17 +6,17 @@ import {
   useState,
 } from "react";
 
-import PhonemeButton from "../components/PhonemeButton";
-import GenerateButton from "../components/GenerateButton";
+import PhonemeButton from "../../components/PhonemeButton";
+import GenerateButton from "../../components/GenerateButton";
 
 import {
   phonemes,
   PhonemeWord,
-} from "../data/phonemes";
+} from "../../data/phonemes";
 
 import {
   generateWordleHTML,
-} from "../utils/generateWordleHTML";
+} from "../../utils/generateWordleHTML";
 
 // =========================================================
 // TYPES

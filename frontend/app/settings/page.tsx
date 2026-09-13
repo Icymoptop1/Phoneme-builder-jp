@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "../components/ThemeProvider";
+import { useTheme } from "../../components/ThemeProvider";
 
 export default function SettingsPage() {
   const {

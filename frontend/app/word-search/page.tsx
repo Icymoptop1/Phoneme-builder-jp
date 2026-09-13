@@ -5,24 +5,24 @@ import {
   useState,
 } from "react";
 
-import GenerateButton from "../components/GenerateButton";
+import GenerateButton from "../../components/GenerateButton";
 
 import {
   phonemes,
-} from "../data/phonemes";
+} from "../../data/phonemes";
 
 import type {
   PhonemeWord,
-} from "../data/phonemes";
+} from "../../data/phonemes";
 
 import {
   generateWordSearch,
   WordSearchPuzzle,
-} from "../utils/wordSearchGenerator";
+} from "../../utils/wordSearchGenerator";
 
 import {
   generateWordSearchHTML,
-} from "../utils/generateWordSearchHTML";
+} from "../../utils/generateWordSearchHTML";
 
 /*
  * Maximum number of words requested
