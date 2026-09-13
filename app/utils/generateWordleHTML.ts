@@ -1,21 +1,51 @@
-import type { PhonemeWord } from "../data/phonemes";
-import { phonemes } from "../data/phonemes";
+import type {
+  PhonemeWord,
+} from "../data/phonemes";
+
+type ExportWord = PhonemeWord & {
+  hint?: string | null;
+};
+
+type WordleKeyboardKey = {
+  symbol: string;
+  label: string;
+  example: string;
+};
 
 interface WordleHTMLSettings {
-  target: PhonemeWord;
+  target: ExportWord;
   maxAttempts: number;
+  hintsEnabled?: boolean;
+  theme?: string;
+  keyboardPhonemes: WordleKeyboardKey[];
 }
 
 export function generateWordleHTML({
   target,
   maxAttempts,
+  hintsEnabled = true,
+  theme = "light",
+  keyboardPhonemes,
 }: WordleHTMLSettings): void {
-  const targetJSON = JSON.stringify(target);
-  const keyboardJSON = JSON.stringify(phonemes);
+  const targetJSON =
+    JSON.stringify(target);
+
+  const keyboardJSON =
+    JSON.stringify(
+      keyboardPhonemes
+    );
+
+  const initialTheme =
+    theme === "dark"
+      ? "dark"
+      : "light";
 
   const html = `
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html
+  lang="en"
+  data-theme="${initialTheme}"
+>
 
 <head>
   <meta charset="UTF-8" />
@@ -63,13 +93,17 @@ export function generateWordleHTML({
 
     body {
       margin: 0;
+
       font-family:
         Arial,
         Helvetica,
         sans-serif;
 
-      background: var(--background);
-      color: var(--text);
+      background:
+        var(--background);
+
+      color:
+        var(--text);
 
       transition:
         background 0.2s ease,
@@ -81,139 +115,238 @@ export function generateWordleHTML({
       cursor: pointer;
     }
 
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
     button:focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 2px;
+      outline:
+        3px solid
+        var(--focus);
+
+      outline-offset:
+        2px;
     }
 
     .site-header {
-      background: var(--surface-secondary);
-      border-bottom: 1px solid var(--border);
-      padding: 28px 5%;
+      background:
+        var(--surface-secondary);
+
+      border-bottom:
+        1px solid
+        var(--border);
+
+      padding:
+        28px 5%;
     }
 
     .header-content {
-      max-width: 1100px;
-      margin: auto;
+      max-width:
+        1100px;
 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      margin:
+        auto;
 
-      gap: 20px;
+      display:
+        flex;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        center;
+
+      gap:
+        20px;
     }
 
     .site-header h1 {
-      margin: 0 0 6px;
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      margin:
+        0 0 6px;
+
+      font-size:
+        clamp(
+          1.6rem,
+          4vw,
+          2.4rem
+        );
     }
 
     .site-header p {
-      margin: 0;
-      color: var(--muted);
+      margin:
+        0;
+
+      color:
+        var(--muted);
     }
 
     .theme-toggle {
-      width: 42px;
-      height: 42px;
+      width:
+        42px;
 
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      height:
+        42px;
 
-      background: var(--surface);
-      color: var(--text);
+      border:
+        1px solid
+        var(--border);
 
-      font-size: 1rem;
+      border-radius:
+        8px;
+
+      background:
+        var(--surface);
+
+      color:
+        var(--text);
+
+      font-size:
+        1rem;
     }
 
     .page {
-      width: min(1100px, 92%);
-      margin: 0 auto;
-      padding: 45px 0;
+      width:
+        min(
+          1100px,
+          92%
+        );
+
+      margin:
+        0 auto;
+
+      padding:
+        45px 0;
     }
 
     .builder-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-
-      gap: 20px;
-      margin-bottom: 28px;
+      margin-bottom:
+        28px;
     }
 
     .builder-header h2 {
-      margin: 8px 0;
-      font-size: 2rem;
+      margin:
+        8px 0;
+
+      font-size:
+        2rem;
     }
 
     .builder-header p {
-      margin: 0;
-      color: var(--muted);
+      margin:
+        0;
+
+      color:
+        var(--muted);
     }
 
     .badge {
-      display: inline-block;
+      display:
+        inline-block;
 
-      padding: 5px 10px;
+      padding:
+        5px 10px;
 
-      border-radius: 20px;
+      border-radius:
+        20px;
 
-      background: var(--surface-secondary);
-      color: var(--muted);
+      background:
+        var(--surface-secondary);
 
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
+      color:
+        var(--muted);
+
+      font-size:
+        0.72rem;
+
+      font-weight:
+        800;
+
+      letter-spacing:
+        0.06em;
     }
 
     .wordle-layout {
-      display: grid;
+      display:
+        grid;
 
       grid-template-columns:
         minmax(300px, 0.9fr)
         minmax(400px, 1.1fr);
 
-      gap: 25px;
+      gap:
+        25px;
     }
 
     .builder-panel,
     .preview-panel {
-      background: var(--surface);
+      min-width:
+        0;
 
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      padding:
+        25px;
 
-      padding: 25px;
+      background:
+        var(--surface);
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        12px;
     }
 
     .builder-panel h3,
     .preview-panel h3 {
-      margin-top: 0;
+      margin-top:
+        0;
     }
 
     .instruction {
-      color: var(--muted);
-      font-size: 0.9rem;
+      color:
+        var(--muted);
+
+      font-size:
+        0.9rem;
     }
 
     .phoneme-grid {
-      display: grid;
+      display:
+        grid;
 
       grid-template-columns:
-        repeat(auto-fit, minmax(88px, 1fr));
+        repeat(
+          auto-fit,
+          minmax(
+            88px,
+            1fr
+          )
+        );
 
-      gap: 10px;
-      margin-top: 22px;
+      gap:
+        10px;
+
+      margin-top:
+        22px;
     }
 
     .phoneme-button {
-      background: var(--surface-secondary);
-      color: var(--text);
+      padding:
+        12px 6px;
 
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      background:
+        var(--surface-secondary);
 
-      padding: 12px 6px;
+      color:
+        var(--text);
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        8px;
 
       transition:
         transform 0.15s ease,
@@ -222,239 +355,434 @@ export function generateWordleHTML({
 
     .phoneme-button:hover,
     .phoneme-button:focus {
-      border-color: var(--focus);
-      transform: translateY(-2px);
+      border-color:
+        var(--focus);
+
+      transform:
+        translateY(-2px);
     }
 
     .phoneme-symbol {
-      display: block;
-      font-size: 1.15rem;
-      font-weight: 700;
+      display:
+        block;
+
+      font-size:
+        1.15rem;
+
+      font-weight:
+        700;
     }
 
     .phoneme-label {
-      display: block;
-      color: var(--muted);
-      font-size: 0.75rem;
-      margin-top: 4px;
+      display:
+        block;
+
+      margin-top:
+        4px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        0.75rem;
     }
 
     .preview-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      display:
+        flex;
 
-      gap: 20px;
+      justify-content:
+        space-between;
+
+      align-items:
+        flex-start;
+
+      gap:
+        20px;
     }
 
     .preview-header p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 0.85rem;
+      margin:
+        4px 0 0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        0.85rem;
     }
 
     .preview-header span {
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 800;
+      color:
+        var(--muted);
+
+      font-size:
+        0.75rem;
+
+      font-weight:
+        800;
+    }
+
+    .hint-box {
+      margin:
+        18px 0 0;
+
+      padding:
+        13px;
+
+      background:
+        var(--surface-secondary);
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:
+        8px;
     }
 
     .wordle-grid {
-      display: flex;
-      flex-direction: column;
+      display:
+        flex;
 
-      gap: 8px;
-      margin: 24px 0;
+      flex-direction:
+        column;
+
+      gap:
+        8px;
+
+      margin:
+        24px 0;
+
+      overflow-x:
+        auto;
     }
 
     .guess-row {
-      display: flex;
-      justify-content: center;
+      display:
+        flex;
 
-      gap: 8px;
+      justify-content:
+        center;
+
+      gap:
+        8px;
+
+      min-width:
+        max-content;
     }
 
     .guess-cell {
-      width: 64px;
-      height: 64px;
+      width:
+        64px;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height:
+        64px;
 
-      border: 2px solid var(--border);
-      border-radius: 8px;
+      display:
+        flex;
 
-      background: var(--surface);
+      align-items:
+        center;
 
-      font-weight: 700;
-      font-size: 1rem;
+      justify-content:
+        center;
+
+      border:
+        2px solid
+        var(--border);
+
+      border-radius:
+        8px;
+
+      background:
+        var(--surface);
+
+      font-weight:
+        700;
+
+      font-size:
+        1rem;
     }
 
     .guess-cell.correct {
-      background: var(--success);
-      border-color: var(--success);
-      color: white;
+      background:
+        var(--success);
+
+      border-color:
+        var(--success);
+
+      color:
+        white;
     }
 
     .guess-cell.present {
-      background: var(--present);
-      border-color: var(--present);
-      color: white;
+      background:
+        var(--present);
+
+      border-color:
+        var(--present);
+
+      color:
+        white;
     }
 
     .guess-cell.absent {
-      background: var(--error);
-      border-color: var(--error);
-      color: white;
+      background:
+        var(--error);
+
+      border-color:
+        var(--error);
+
+      color:
+        white;
     }
 
     .game-message {
-      margin-top: 15px;
+      margin-top:
+        15px;
 
-      padding: 13px;
+      padding:
+        13px;
 
-      border-radius: 8px;
+      border-radius:
+        8px;
 
-      text-align: center;
-      font-weight: 700;
+      text-align:
+        center;
+
+      font-weight:
+        700;
     }
 
     .game-message.success {
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid var(--success);
-      color: var(--success);
+      background:
+        rgba(
+          34,
+          197,
+          94,
+          0.12
+        );
+
+      border:
+        1px solid
+        var(--success);
+
+      color:
+        var(--success);
     }
 
     .game-message.error {
-      background: rgba(220, 38, 38, 0.1);
-      border: 1px solid var(--error);
-      color: var(--error);
+      background:
+        rgba(
+          220,
+          38,
+          38,
+          0.1
+        );
+
+      border:
+        1px solid
+        var(--error);
+
+      color:
+        var(--error);
     }
 
     .game-controls {
-      display: flex;
-      justify-content: center;
+      display:
+        flex;
 
-      gap: 10px;
-      flex-wrap: wrap;
+      justify-content:
+        center;
 
-      margin-top: 20px;
+      flex-wrap:
+        wrap;
+
+      gap:
+        10px;
+
+      margin-top:
+        20px;
     }
 
     .primary-button,
     .secondary-button {
-      border-radius: 8px;
+      padding:
+        11px 17px;
 
-      padding: 11px 17px;
+      border-radius:
+        8px;
 
-      font-weight: 700;
+      font-weight:
+        700;
     }
 
     .primary-button {
-      background: var(--primary);
-      color: var(--background);
-      border: none;
+      background:
+        var(--primary);
+
+      color:
+        var(--background);
+
+      border:
+        none;
     }
 
     .secondary-button {
-      background: var(--surface-secondary);
-      color: var(--text);
+      background:
+        var(--surface-secondary);
 
-      border: 1px solid var(--border);
+      color:
+        var(--text);
+
+      border:
+        1px solid
+        var(--border);
     }
 
     .feedback-legend {
-      display: flex;
-      flex-wrap: wrap;
+      display:
+        flex;
 
-      gap: 15px;
+      flex-wrap:
+        wrap;
 
-      margin-top: 24px;
+      gap:
+        15px;
 
-      color: var(--muted);
-      font-size: 0.88rem;
+      margin-top:
+        24px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        0.88rem;
     }
 
     .feedback-legend span {
-      display: flex;
-      align-items: center;
+      display:
+        flex;
 
-      gap: 7px;
+      align-items:
+        center;
+
+      gap:
+        7px;
     }
 
     .feedback-legend i {
-      width: 14px;
-      height: 14px;
+      width:
+        14px;
 
-      border-radius: 3px;
+      height:
+        14px;
 
-      display: inline-block;
+      display:
+        inline-block;
+
+      border-radius:
+        3px;
     }
 
     .legend-correct {
-      background: var(--success);
+      background:
+        var(--success);
     }
 
     .legend-present {
-      background: var(--present);
+      background:
+        var(--present);
     }
 
     .legend-absent {
-      background: var(--error);
+      background:
+        var(--error);
     }
 
     .completion-card {
-      margin-top: 18px;
+      margin-top:
+        18px;
 
-      padding: 22px;
+      padding:
+        22px;
 
-      text-align: center;
+      text-align:
+        center;
 
-      border-radius: 10px;
+      background:
+        rgba(
+          34,
+          197,
+          94,
+          0.12
+        );
 
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid var(--success);
+      border:
+        1px solid
+        var(--success);
+
+      border-radius:
+        10px;
     }
 
     .completion-card h3 {
-      margin: 0 0 8px;
+      margin:
+        0 0 8px;
     }
 
     .completion-card strong {
-      display: block;
+      display:
+        block;
 
-      margin-top: 8px;
+      margin-top:
+        8px;
 
-      font-size: 1.7rem;
+      font-size:
+        1.7rem;
     }
 
     .completion-card span {
-      display: block;
+      display:
+        block;
 
-      margin-top: 5px;
+      margin-top:
+        5px;
 
-      color: var(--muted);
+      color:
+        var(--muted);
     }
 
-    @media (max-width: 900px) {
+    @media (
+      max-width: 900px
+    ) {
       .wordle-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
     }
 
-    @media (max-width: 600px) {
-      .header-content,
-      .builder-header {
-        flex-direction: column;
-        align-items: flex-start;
+    @media (
+      max-width: 600px
+    ) {
+      .header-content {
+        flex-direction:
+          column;
+
+        align-items:
+          flex-start;
       }
 
       .guess-cell {
-        width: 54px;
-        height: 54px;
+        width:
+          54px;
 
-        font-size: 0.85rem;
+        height:
+          54px;
+
+        font-size:
+          0.85rem;
       }
     }
   </style>
@@ -464,6 +792,7 @@ export function generateWordleHTML({
 
   <header class="site-header">
     <div class="header-content">
+
       <div>
         <h1>
           Phoneme Learning Activity Builder
@@ -481,50 +810,57 @@ export function generateWordleHTML({
         aria-label="Toggle light and dark mode"
         title="Toggle light and dark mode"
       >
-        🌙
+        ${
+          initialTheme === "dark"
+            ? "☀️"
+            : "🌙"
+        }
       </button>
+
     </div>
   </header>
 
   <main class="page">
 
     <div class="builder-header">
-      <div>
-        <span class="badge">
-          PHONEME WORDLE
-        </span>
 
-        <h2>
-          Wordle Activity
-        </h2>
+      <span class="badge">
+        PHONEME WORDLE
+      </span>
 
-        <p>
-          Select phonemes to build the hidden target word.
-        </p>
-      </div>
+      <h2>
+        Wordle Activity
+      </h2>
+
+      <p>
+        Select phoneme tiles to guess the hidden word.
+      </p>
+
     </div>
 
     <div class="wordle-layout">
 
-      <div class="builder-panel">
+      <section class="builder-panel">
+
         <h3>
           Phoneme Keyboard
         </h3>
 
         <p class="instruction">
-          Hover over each phoneme to see its English
-          equivalence and example word.
+          Select from the phonemes provided for this activity.
         </p>
 
         <div
           class="phoneme-grid"
           id="keyboard"
         ></div>
-      </div>
 
-      <div class="preview-panel">
+      </section>
+
+      <section class="preview-panel">
 
         <div class="preview-header">
+
           <div>
             <h3>
               Wordle
@@ -536,9 +872,28 @@ export function generateWordleHTML({
           </div>
 
           <span>
-            ${target.phonemes.length} PHONEMES
+            ${
+              target.phonemes.length
+            } PHONEMES
           </span>
+
         </div>
+
+        ${
+          hintsEnabled &&
+          target.hint
+            ? `
+        <div class="hint-box">
+          <strong>
+            Hint:
+          </strong>
+          ${escapeHtml(
+            target.hint
+          )}
+        </div>
+        `
+            : ""
+        }
 
         <div
           class="wordle-grid"
@@ -549,6 +904,8 @@ export function generateWordleHTML({
           id="message"
           class="game-message"
           style="display: none;"
+          role="status"
+          aria-live="polite"
         ></div>
 
         <div
@@ -558,6 +915,7 @@ export function generateWordleHTML({
         ></div>
 
         <div class="game-controls">
+
           <button
             type="button"
             class="secondary-button"
@@ -581,9 +939,11 @@ export function generateWordleHTML({
           >
             Submit Guess
           </button>
+
         </div>
 
         <div class="feedback-legend">
+
           <span>
             <i class="legend-correct"></i>
             Correct position
@@ -598,91 +958,142 @@ export function generateWordleHTML({
             <i class="legend-absent"></i>
             Incorrect phoneme
           </span>
+
         </div>
 
-      </div>
+      </section>
 
     </div>
 
   </main>
 
 <script>
-  const target = ${targetJSON};
-  const phonemes = ${keyboardJSON};
-  const maxAttempts = ${maxAttempts};
+  const target =
+    ${targetJSON};
+
+  const phonemes =
+    ${keyboardJSON};
+
+  const maxAttempts =
+    ${maxAttempts};
+
+  const generatedTheme =
+    ${JSON.stringify(
+      initialTheme
+    )};
 
   let currentGuess = [];
+
   let submittedGuesses = [];
-  let gameComplete = false;
+
+  let gameComplete =
+    false;
 
   const keyboardElement =
-    document.getElementById("keyboard");
+    document.getElementById(
+      "keyboard"
+    );
 
   const gridElement =
-    document.getElementById("wordleGrid");
+    document.getElementById(
+      "wordleGrid"
+    );
 
   const messageElement =
-    document.getElementById("message");
+    document.getElementById(
+      "message"
+    );
 
   const completionCard =
-    document.getElementById("completionCard");
+    document.getElementById(
+      "completionCard"
+    );
 
   const attemptText =
-    document.getElementById("attemptText");
+    document.getElementById(
+      "attemptText"
+    );
 
   const submitButton =
-    document.getElementById("submitButton");
+    document.getElementById(
+      "submitButton"
+    );
 
   const removeButton =
-    document.getElementById("removeButton");
+    document.getElementById(
+      "removeButton"
+    );
 
   const clearButton =
-    document.getElementById("clearButton");
+    document.getElementById(
+      "clearButton"
+    );
 
   const themeToggle =
-    document.getElementById("themeToggle");
+    document.getElementById(
+      "themeToggle"
+    );
 
   function renderKeyboard() {
-    keyboardElement.innerHTML = "";
+    keyboardElement.innerHTML =
+      "";
 
-    phonemes.forEach((phoneme) => {
-      const button =
-        document.createElement("button");
+    phonemes.forEach(
+      (phoneme) => {
+        const button =
+          document.createElement(
+            "button"
+          );
 
-      button.type = "button";
-      button.className = "phoneme-button";
+        button.type =
+          "button";
 
-      button.title =
-        phoneme.symbol +
-        " — " +
-        phoneme.example;
+        button.className =
+          "phoneme-button";
 
-      button.setAttribute(
-        "aria-label",
-        phoneme.symbol +
-          ". " +
-          phoneme.example
-      );
+        button.title =
+          phoneme.symbol +
+          " — " +
+          phoneme.example;
 
-      button.innerHTML =
-        '<span class="phoneme-symbol">/' +
-        phoneme.symbol +
-        '/</span>' +
-        '<span class="phoneme-label">' +
-        phoneme.label +
-        "</span>";
+        button.setAttribute(
+          "aria-label",
+          phoneme.symbol +
+            ". " +
+            phoneme.example
+        );
 
-      button.addEventListener(
-        "click",
-        () => addPhoneme(phoneme.symbol)
-      );
+        button.innerHTML =
+          '<span class="phoneme-symbol">/' +
+          escapeText(
+            phoneme.symbol
+          ) +
+          '/</span>' +
+          '<span class="phoneme-label">' +
+          escapeText(
+            phoneme.label
+          ) +
+          "</span>";
 
-      keyboardElement.appendChild(button);
-    });
+        button.addEventListener(
+          "click",
+          () =>
+            addPhoneme(
+              phoneme.symbol
+            )
+        );
+
+        keyboardElement
+          .appendChild(
+            button
+          );
+      }
+    );
   }
 
   function renderGrid() {
-    gridElement.innerHTML = "";
+    gridElement.innerHTML =
+      "";
 
     for (
       let rowIndex = 0;
@@ -690,49 +1101,75 @@ export function generateWordleHTML({
       rowIndex++
     ) {
       const row =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
-      row.className = "guess-row";
+      row.className =
+        "guess-row";
 
       const submitted =
-        submittedGuesses[rowIndex];
+        submittedGuesses[
+          rowIndex
+        ];
 
       const isCurrentRow =
-        rowIndex === submittedGuesses.length &&
+        rowIndex ===
+          submittedGuesses.length &&
         !gameComplete;
 
       for (
         let index = 0;
-        index < target.phonemes.length;
+        index <
+        target.phonemes.length;
         index++
       ) {
         const cell =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
-        cell.className = "guess-cell";
+        cell.className =
+          "guess-cell";
 
         if (submitted) {
           cell.textContent =
-            submitted.phonemes[index];
+            submitted.phonemes[
+              index
+            ];
 
           cell.classList.add(
-            submitted.feedback[index]
+            submitted.feedback[
+              index
+            ]
           );
-        } else if (isCurrentRow) {
+        } else if (
+          isCurrentRow
+        ) {
           cell.textContent =
-            currentGuess[index] || "";
+            currentGuess[
+              index
+            ] || "";
         }
 
-        row.appendChild(cell);
+        row.appendChild(
+          cell
+        );
       }
 
-      gridElement.appendChild(row);
+      gridElement
+        .appendChild(
+          row
+        );
     }
 
     updateAttemptText();
+    updateControls();
   }
 
-  function addPhoneme(symbol) {
+  function addPhoneme(
+    symbol
+  ) {
     if (gameComplete) {
       return;
     }
@@ -744,7 +1181,9 @@ export function generateWordleHTML({
       return;
     }
 
-    currentGuess.push(symbol);
+    currentGuess.push(
+      symbol
+    );
 
     hideMessage();
     renderGrid();
@@ -772,30 +1211,46 @@ export function generateWordleHTML({
     renderGrid();
   }
 
-  function evaluateGuess(guess) {
+  function evaluateGuess(
+    guess
+  ) {
     const result =
-      Array(target.phonemes.length)
-        .fill("absent");
+      Array(
+        target.phonemes.length
+      ).fill(
+        "absent"
+      );
 
-    const remaining =
-      [...target.phonemes];
+    const remaining = [
+      ...target.phonemes,
+    ];
 
     guess.forEach(
-      (phoneme, index) => {
+      (
+        phoneme,
+        index
+      ) => {
         if (
           phoneme ===
-          target.phonemes[index]
+          target.phonemes[
+            index
+          ]
         ) {
           result[index] =
             "correct";
 
-          remaining[index] = "";
+          remaining[
+            index
+          ] = "";
         }
       }
     );
 
     guess.forEach(
-      (phoneme, index) => {
+      (
+        phoneme,
+        index
+      ) => {
         if (
           result[index] ===
           "correct"
@@ -804,13 +1259,19 @@ export function generateWordleHTML({
         }
 
         const foundIndex =
-          remaining.indexOf(phoneme);
+          remaining.indexOf(
+            phoneme
+          );
 
-        if (foundIndex !== -1) {
+        if (
+          foundIndex !== -1
+        ) {
           result[index] =
             "present";
 
-          remaining[foundIndex] = "";
+          remaining[
+            foundIndex
+          ] = "";
         }
       }
     );
@@ -838,21 +1299,27 @@ export function generateWordleHTML({
     }
 
     const feedback =
-      evaluateGuess(currentGuess);
+      evaluateGuess(
+        currentGuess
+      );
 
     submittedGuesses.push({
-      phonemes: [...currentGuess],
+      phonemes: [
+        ...currentGuess
+      ],
       feedback,
     });
 
     const correct =
       feedback.every(
         (status) =>
-          status === "correct"
+          status ===
+          "correct"
       );
 
     if (correct) {
-      gameComplete = true;
+      gameComplete =
+        true;
 
       renderGrid();
 
@@ -861,9 +1328,9 @@ export function generateWordleHTML({
         "success"
       );
 
-      showCompletion();
-
-      disableControls();
+      showCompletion(
+        true
+      );
 
       return;
     }
@@ -874,7 +1341,8 @@ export function generateWordleHTML({
       submittedGuesses.length >=
       maxAttempts
     ) {
-      gameComplete = true;
+      gameComplete =
+        true;
 
       renderGrid();
 
@@ -883,9 +1351,9 @@ export function generateWordleHTML({
         "error"
       );
 
-      showCompletion();
-
-      disableControls();
+      showCompletion(
+        false
+      );
 
       return;
     }
@@ -898,28 +1366,35 @@ export function generateWordleHTML({
     );
   }
 
-  function showCompletion() {
-    completionCard.style.display =
+  function showCompletion(
+    won
+  ) {
+    completionCard
+      .style.display =
       "block";
 
-    completionCard.innerHTML =
+    completionCard
+      .innerHTML =
       "<h3>" +
       (
-        submittedGuesses[
-          submittedGuesses.length - 1
-        ].feedback.every(
-          (status) =>
-            status === "correct"
-        )
+        won
           ? "Congratulations!"
           : "Answer"
       ) +
       "</h3>" +
       "<strong>" +
-      target.english.toUpperCase() +
+      escapeText(
+        target.english
+          .toUpperCase()
+      ) +
       "</strong>" +
       "<span>/" +
-      target.phonemes.join(" ") +
+      escapeText(
+        target.phonemes
+          .join(
+            " "
+          )
+      ) +
       "/</span>";
   }
 
@@ -927,26 +1402,34 @@ export function generateWordleHTML({
     message,
     type
   ) {
-    messageElement.style.display =
+    messageElement
+      .style.display =
       "block";
 
-    messageElement.textContent =
+    messageElement
+      .textContent =
       message;
 
-    messageElement.className =
-      "game-message " + type;
+    messageElement
+      .className =
+      "game-message " +
+      type;
   }
 
   function hideMessage() {
-    messageElement.style.display =
+    messageElement
+      .style.display =
       "none";
 
-    messageElement.textContent = "";
+    messageElement
+      .textContent =
+      "";
   }
 
   function updateAttemptText() {
     if (gameComplete) {
-      attemptText.textContent =
+      attemptText
+        .textContent =
         "Game complete";
 
       return;
@@ -954,41 +1437,64 @@ export function generateWordleHTML({
 
     const currentAttempt =
       Math.min(
-        submittedGuesses.length + 1,
+        submittedGuesses
+          .length + 1,
         maxAttempts
       );
 
-    attemptText.textContent =
+    attemptText
+      .textContent =
       "Attempt " +
       currentAttempt +
       " of " +
       maxAttempts;
   }
 
-  function disableControls() {
-    submitButton.disabled = true;
-    removeButton.disabled = true;
-    clearButton.disabled = true;
+  function updateControls() {
+    submitButton.disabled =
+      gameComplete ||
+      currentGuess.length !==
+        target.phonemes.length;
+
+    removeButton.disabled =
+      gameComplete ||
+      currentGuess.length === 0;
+
+    clearButton.disabled =
+      gameComplete ||
+      currentGuess.length === 0;
   }
 
-  function setTheme(theme) {
-    document.documentElement.dataset.theme =
-      theme;
+  function setTheme(
+    theme
+  ) {
+    const safeTheme =
+      theme === "dark"
+        ? "dark"
+        : "light";
+
+    document
+      .documentElement
+      .dataset.theme =
+      safeTheme;
 
     localStorage.setItem(
       "phoneme-wordle-theme",
-      theme
+      safeTheme
     );
 
-    themeToggle.textContent =
-      theme === "dark"
+    themeToggle
+      .textContent =
+      safeTheme === "dark"
         ? "☀️"
         : "🌙";
   }
 
   function toggleTheme() {
     const current =
-      document.documentElement.dataset.theme;
+      document
+        .documentElement
+        .dataset.theme;
 
     setTheme(
       current === "dark"
@@ -1007,30 +1513,85 @@ export function generateWordleHTML({
       saved === "dark" ||
       saved === "light"
     ) {
-      setTheme(saved);
+      setTheme(
+        saved
+      );
     } else {
-      setTheme("light");
+      setTheme(
+        generatedTheme
+      );
     }
   }
 
-  submitButton.addEventListener(
-    "click",
-    submitGuess
-  );
+  function escapeText(
+    value
+  ) {
+    const element =
+      document.createElement(
+        "div"
+      );
 
-  removeButton.addEventListener(
-    "click",
-    removeLast
-  );
+    element.textContent =
+      String(
+        value
+      );
 
-  clearButton.addEventListener(
-    "click",
-    clearGuess
-  );
+    return element
+      .innerHTML;
+  }
 
-  themeToggle.addEventListener(
-    "click",
-    toggleTheme
+  submitButton
+    .addEventListener(
+      "click",
+      submitGuess
+    );
+
+  removeButton
+    .addEventListener(
+      "click",
+      removeLast
+    );
+
+  clearButton
+    .addEventListener(
+      "click",
+      clearGuess
+    );
+
+  themeToggle
+    .addEventListener(
+      "click",
+      toggleTheme
+    );
+
+  window.addEventListener(
+    "keydown",
+    (
+      event
+    ) => {
+      if (
+        event.key ===
+        "Backspace"
+      ) {
+        event.preventDefault();
+
+        removeLast();
+      }
+
+      if (
+        event.key ===
+        "Enter"
+      ) {
+        event.preventDefault();
+
+        if (
+          currentGuess.length ===
+          target.phonemes.length
+        ) {
+          submitGuess();
+        }
+      }
+    }
   );
 
   loadTheme();
@@ -1042,29 +1603,67 @@ export function generateWordleHTML({
 </html>
 `;
 
-  const blob = new Blob(
-    [html],
-    {
-      type: "text/html",
-    }
-  );
+  const blob =
+    new Blob(
+      [html],
+      {
+        type: "text/html",
+      }
+    );
 
   const url =
-    URL.createObjectURL(blob);
+    URL.createObjectURL(
+      blob
+    );
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
 
-  link.href = url;
+  link.href =
+    url;
 
   link.download =
     "phoneme-wordle.html";
 
-  document.body.appendChild(link);
+  document.body.appendChild(
+    link
+  );
 
   link.click();
 
-  document.body.removeChild(link);
+  document.body.removeChild(
+    link
+  );
 
-  URL.revokeObjectURL(url);
+  URL.revokeObjectURL(
+    url
+  );
+}
+
+function escapeHtml(
+  value: string
+): string {
+  return value
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 }
