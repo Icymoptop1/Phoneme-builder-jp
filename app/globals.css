@@ -1,6 +1,13 @@
+/* 1. GLOBAL RESET */
+
 * {
   box-sizing: border-box;
 }
+
+/* 
+   2. THEME VARIABLES
+   Light and dark theme colour tokens
+*/
 
 :root {
   --background: #f5f7fb;
@@ -29,6 +36,8 @@
   --success: #4ade80;
   --error: #ff8178;
 }
+
+/* 3. BASE ELEMENT STYLES */
 
 html {
   scroll-behavior: smooth;
@@ -65,7 +74,10 @@ a {
   text-decoration: none;
 }
 
-/* NAVIGATION */
+/* 
+   4. NAVIGATION
+   Desktop navigation, hamburger menu and mobile navigation 
+*/
 
 .menu-wrapper {
   position: relative;
@@ -245,7 +257,7 @@ a {
   background: var(--surface-secondary);
 }
 
-/* HEADER */
+/* 5. SITE HEADER */
 
 .site-header {
   background: var(--surface-secondary);
@@ -309,7 +321,7 @@ a {
   white-space: nowrap;
 }
 
-/* Theme Button*/
+/* 6. THEME CONTROLS */
 
 .theme-toggle {
   width: 40px;
@@ -360,7 +372,7 @@ a {
     var(--surface-secondary);
 }
 
-/* MAIN */
+/* 7. MAIN PAGE LAYOUT */
 
 .main-content {
   min-height: 65vh;
@@ -410,7 +422,7 @@ a {
   letter-spacing: 0.06em;
 }
 
-/* HERO */
+/* 8. HOME PAGE / HERO */
 
 .hero {
   display: grid;
@@ -533,7 +545,7 @@ a {
   margin-top: 10px;
 }
 
-/* BUTTONS */
+/* 9. SHARED BUTTONS */
 
 .primary-button,
 .secondary-button,
@@ -596,7 +608,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* FEATURES */
+/* 10. FEATURE CARDS */
 
 .feature-grid {
   display: grid;
@@ -643,7 +655,7 @@ button:disabled {
   font-weight: 700;
 }
 
-/* CARDS */
+/* 11. SHARED CARDS & CONTENT */
 
 .content-card,
 .settings-card,
@@ -700,7 +712,10 @@ button:disabled {
   font-size: 1.2rem;
 }
 
-/* BUILDER HEADER */
+/* 
+   12. ACTIVITY BUILDER - SHARED
+   Header and settings shared by activity builders
+*/
 
 .builder-header {
   display: flex;
@@ -727,7 +742,10 @@ button:disabled {
   color: var(--muted);
 }
 
-/* WORDLE */
+/* 
+   13. WORDLE
+   Phoneme keyboard, guesses, feedback and game controls
+*/
 
 .wordle-layout {
   display: grid;
@@ -1140,7 +1158,10 @@ button:disabled {
   margin-top: 20px;
 }
 
-/* WORD SEARCH */
+/* 
+   14. WORD SEARCH
+   Word list, grid, selection and feedback
+*/
 
 .word-search-layout {
   display: grid;
@@ -1280,6 +1301,7 @@ button:disabled {
   font-size: 0.9rem;
 }
 
+
 .word-search-grid {
   display: grid;
 
@@ -1330,7 +1352,284 @@ button:disabled {
   margin: auto;
 }
 
-/* ABOUT VIDEO */
+/* 
+   15. WORD-MANAGEMENT CRUD form, saved-word table and management actions
+*/
+
+.word-management-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.word-management-header {
+  margin-bottom: 2rem;
+}
+
+.word-form-section,
+.word-list-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid currentColor;
+  border-radius: 12px;
+}
+
+.word-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.word-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.word-form input {
+  padding: 0.75rem;
+  border: 1px solid #888;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.form-help {
+  margin-top: -0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.word-form-actions,
+.word-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.word-form button,
+.word-actions button {
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  font: inherit;
+}
+
+.word-message {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.word-table-wrapper {
+  overflow-x: auto;
+}
+
+.word-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.word-table th,
+.word-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #888;
+  text-align: left;
+}
+
+/* 
+   WORD LIST MANAGEMENT
+*/
+
+.word-list-management-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.word-list-management-header {
+  margin-bottom: 2rem;
+}
+
+.word-list-form-section,
+.saved-word-lists-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.word-list-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.word-list-form > label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  font-weight: 600;
+}
+
+.word-list-form input[type="text"] {
+  padding: 0.75rem;
+
+  background: var(--surface);
+  color: var(--text);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.word-selection-section {
+  margin-top: 1rem;
+}
+
+.word-selection-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 0.75rem;
+
+  margin-top: 1rem;
+}
+
+.word-selection-item {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  padding: 1rem;
+
+  background:
+    var(--surface-secondary);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.word-selection-item:hover {
+  border-color:
+    var(--focus);
+}
+
+.word-selection-item div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.25rem;
+}
+
+.word-selection-item span {
+  color: var(--muted);
+
+  font-size: 0.85rem;
+}
+
+.word-list-form-actions,
+.saved-word-list-actions {
+  display: flex;
+
+  gap: 0.75rem;
+
+  flex-wrap: wrap;
+}
+
+.word-list-form-actions button,
+.saved-word-list-actions button {
+  padding: 0.65rem 1rem;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background:
+    var(--surface-secondary);
+
+  color: var(--text);
+
+  cursor: pointer;
+}
+
+.word-list-form-actions button:hover,
+.saved-word-list-actions button:hover {
+  border-color:
+    var(--focus);
+}
+
+.word-list-message {
+  margin-top: 1rem;
+
+  font-weight: 600;
+}
+
+.saved-word-lists-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(250px, 1fr));
+
+  gap: 1rem;
+}
+
+.saved-word-list-card {
+  padding: 1.25rem;
+
+  background:
+    var(--surface-secondary);
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.saved-word-list-card h3 {
+  margin-top: 0;
+}
+
+.saved-word-list-card p {
+  color: var(--muted);
+}
+
+.saved-word-list-count {
+  margin-bottom: 0.75rem;
+
+  font-weight: 700;
+}
+
+.saved-word-list-words {
+  display: flex;
+
+  gap: 0.5rem;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 1rem;
+}
+
+.saved-word-list-words span {
+  padding: 0.4rem 0.6rem;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: 6px;
+
+  font-size: 0.85rem;
+}
+
+/* 
+   16. ABOUT PAGE
+   Video / project information area 
+*/
 
 .video-card {
   margin-top: 20px;
@@ -1357,7 +1656,7 @@ button:disabled {
   text-align: center;
 }
 
-/* SETTINGS */
+/* 17. SETTINGS PAGE */
 
 .settings-card {
   margin-bottom: 20px;
@@ -1410,7 +1709,7 @@ button:disabled {
   color: var(--muted);
 }
 
-/* FOOTER */
+/* 18. FOOTER */
 
 .footer {
   margin-top: 50px;
@@ -1445,7 +1744,10 @@ button:disabled {
   margin: 5px 0;
 }
 
-/* ACCESSIBILITY */
+/* 
+   19. ACCESSIBILITY
+   Keyboard focus visibility and accessible interaction states
+*/
 
 button:focus-visible,
 a:focus-visible,
@@ -1457,8 +1759,12 @@ input:focus-visible {
     2px;
 }
 
-/* RESPONSIVE */
+/* 
+   20. RESPONSIVE LAYOUTS
+   Tablet and mobile overrides
+*/
 
+/* Tablet / small desktop */
 @media (max-width: 900px) {
 
   .desktop-nav {
@@ -1484,7 +1790,34 @@ input:focus-visible {
 
 }
 
+/* Mobile */
 @media (max-width: 600px) {
+
+.word-list-management-page {
+  padding: 1rem;
+}
+
+.word-list-form-section,
+.saved-word-lists-section {
+  padding: 1rem;
+}
+
+.word-selection-grid,
+.saved-word-lists-grid {
+  grid-template-columns: 1fr;
+}
+
+  /* Word Management */
+    .word-management-page {
+      padding: 1rem;
+    }
+
+    .word-form-section,
+    .word-list-section {
+      padding: 1rem;
+    }
+
+  /* Existing mobile layout rules */
 
   .page {
     width: 92%;
