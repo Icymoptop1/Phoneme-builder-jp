@@ -7,6 +7,7 @@ interface WordSearchHTMLSettings {
   size: number;
   theme?: string;
   difficulty?: "EASY" | "MEDIUM" | "HARD";
+  hintsEnabled?: boolean;
 }
 
 export function generateWordSearchHTML({
@@ -14,11 +15,15 @@ export function generateWordSearchHTML({
   size,
   theme = "light",
   difficulty = "MEDIUM",
+  hintsEnabled = true,
 }: WordSearchHTMLSettings): void {
   const initialTheme =
     theme === "dark" ? "dark" : "light";
   const puzzleJSON =
     JSON.stringify(puzzle);
+
+  const hintsEnabledJSON =
+    JSON.stringify(hintsEnabled);
 
   const html = `
 <!DOCTYPE html>
@@ -981,6 +986,9 @@ export function generateWordSearchHTML({
   const puzzle =
     ${puzzleJSON};
 
+  const hintsEnabled =
+    ${hintsEnabledJSON};
+
   let selectionStart = null;
 
   let selectedCells = [];
@@ -1171,9 +1179,11 @@ export function generateWordSearchHTML({
               phoneme
             );
 
-            button.title =
-              "Phoneme " +
-              phoneme;
+            if (hintsEnabled) {
+              button.title =
+                "Phoneme " +
+                phoneme;
+            }
 
             button.dataset.row =
               String(rowIndex);

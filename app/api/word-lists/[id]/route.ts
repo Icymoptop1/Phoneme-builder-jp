@@ -1,5 +1,76 @@
-import { NextRequest, NextResponse } from "next/server";
+import {
+  NextRequest,
+  NextResponse,
+} from "next/server";
+
 import { prisma } from "../../../../lib/prisma";
+
+type WordListRequestBody = {
+  name?: unknown;
+  description?: unknown;
+  wordIds?: unknown;
+};
+
+function getWordListId(id: string) {
+  const wordListId = Number(id);
+
+  if (
+    !Number.isInteger(wordListId) ||
+    wordListId <= 0
+  ) {
+    return null;
+  }
+
+  return wordListId;
+}
+
+function validateWordListBody(
+  body: WordListRequestBody
+) {
+  if (
+    typeof body.name !== "string" ||
+    body.name.trim().length === 0
+  ) {
+    return {
+      error:
+        "Word list name is required.",
+    };
+  }
+
+  if (
+    body.description !== undefined &&
+    body.description !== null &&
+    typeof body.description !== "string"
+  ) {
+    return {
+      error:
+        "Description must be text.",
+    };
+  }
+
+  if (!Array.isArray(body.wordIds)) {
+    return {
+      error:
+        "wordIds must be an array.",
+    };
+  }
+
+  const validWordIds =
+    body.wordIds.every(
+      (wordId) =>
+        Number.isInteger(wordId) &&
+        wordId > 0
+    );
+
+  if (!validWordIds) {
+    return {
+      error:
+        "All word IDs must be valid positive integers.",
+    };
+  }
+
+  return null;
+}
 
 // =========================================================
 // GET ONE WORD LIST
@@ -7,46 +78,75 @@ import { prisma } from "../../../../lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
 ) {
   try {
-    const { id } = await context.params;
-    const wordListId = Number(id);
+    const { id } =
+      await context.params;
 
-    if (!Number.isInteger(wordListId) || wordListId <= 0) {
+    const wordListId =
+      getWordListId(id);
+
+    if (wordListId === null) {
       return NextResponse.json(
-        { error: "Invalid word list ID." },
-        { status: 400 }
+        {
+          error:
+            "Invalid word list ID.",
+        },
+        {
+          status: 400,
+        }
       );
     }
 
-    const wordList = await prisma.wordList.findUnique({
-      where: {
-        id: wordListId,
-      },
-      include: {
-        words: {
-          include: {
-            word: true,
+    const wordList =
+      await prisma.wordList.findUnique({
+        where: {
+          id: wordListId,
+        },
+
+        include: {
+          words: {
+            include: {
+              word: true,
+            },
           },
         },
-      },
-    });
+      });
 
     if (!wordList) {
       return NextResponse.json(
-        { error: "Word list not found." },
-        { status: 404 }
+        {
+          error:
+            "Word list not found.",
+        },
+        {
+          status: 404,
+        }
       );
     }
 
-    return NextResponse.json(wordList);
+    return NextResponse.json(
+      wordList
+    );
   } catch (error) {
-    console.error("GET /api/word-lists/[id] error:", error);
+    console.error(
+      "GET /api/word-lists/[id] error:",
+      error
+    );
 
     return NextResponse.json(
-      { error: "Unable to retrieve word list." },
-      { status: 500 }
+      {
+        error:
+          "Unable to retrieve word list.",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
@@ -57,61 +157,57 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
 ) {
   try {
-    const { id } = await context.params;
-    const wordListId = Number(id);
+    const { id } =
+      await context.params;
 
-    if (!Number.isInteger(wordListId) || wordListId <= 0) {
-      return NextResponse.json(
-        { error: "Invalid word list ID." },
-        { status: 400 }
-      );
-    }
+    const wordListId =
+      getWordListId(id);
 
-    const body = await request.json();
-
-    const name =
-      typeof body.name === "string"
-        ? body.name.trim()
-        : "";
-
-    const description =
-      typeof body.description === "string" &&
-      body.description.trim().length > 0
-        ? body.description.trim()
-        : null;
-
-    const wordIds = body.wordIds;
-
-    if (!name) {
-      return NextResponse.json(
-        { error: "Word list name is required." },
-        { status: 400 }
-      );
-    }
-
-    if (!Array.isArray(wordIds)) {
-      return NextResponse.json(
-        { error: "wordIds must be an array." },
-        { status: 400 }
-      );
-    }
-
-    const validWordIds = wordIds.every(
-      (wordId) =>
-        Number.isInteger(wordId) &&
-        wordId > 0
-    );
-
-    if (!validWordIds) {
+    if (wordListId === null) {
       return NextResponse.json(
         {
           error:
-            "All word IDs must be valid positive integers.",
+            "Invalid word list ID.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
+      );
+    }
+
+    let body: WordListRequestBody;
+
+    try {
+      body =
+        (await request.json()) as WordListRequestBody;
+    } catch {
+      return NextResponse.json(
+        {
+          error:
+            "Request body must contain valid JSON.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const validationError =
+      validateWordListBody(body);
+
+    if (validationError) {
+      return NextResponse.json(
+        validationError,
+        {
+          status: 400,
+        }
       );
     }
 
@@ -124,13 +220,31 @@ export async function PUT(
 
     if (!existingList) {
       return NextResponse.json(
-        { error: "Word list not found." },
-        { status: 404 }
+        {
+          error:
+            "Word list not found.",
+        },
+        {
+          status: 404,
+        }
       );
     }
 
+    const name =
+      (body.name as string).trim();
+
+    const description =
+      typeof body.description ===
+        "string" &&
+      body.description.trim().length >
+        0
+        ? body.description.trim()
+        : null;
+
     const uniqueWordIds = [
-      ...new Set<number>(wordIds),
+      ...new Set(
+        body.wordIds as number[]
+      ),
     ];
 
     if (uniqueWordIds.length > 0) {
@@ -141,20 +255,24 @@ export async function PUT(
               in: uniqueWordIds,
             },
           },
+
           select: {
             id: true,
           },
         });
 
       if (
-        existingWords.length !== uniqueWordIds.length
+        existingWords.length !==
+        uniqueWordIds.length
       ) {
         return NextResponse.json(
           {
             error:
               "One or more selected words do not exist.",
           },
-          { status: 400 }
+          {
+            status: 400,
+          }
         );
       }
     }
@@ -172,15 +290,16 @@ export async function PUT(
           words: {
             deleteMany: {},
 
-            create: uniqueWordIds.map(
-              (wordId) => ({
-                word: {
-                  connect: {
-                    id: wordId,
+            create:
+              uniqueWordIds.map(
+                (wordId) => ({
+                  word: {
+                    connect: {
+                      id: wordId,
+                    },
                   },
-                },
-              })
-            ),
+                })
+              ),
           },
         },
 
@@ -193,7 +312,9 @@ export async function PUT(
         },
       });
 
-    return NextResponse.json(updatedWordList);
+    return NextResponse.json(
+      updatedWordList
+    );
   } catch (error) {
     console.error(
       "PUT /api/word-lists/[id] error:",
@@ -201,8 +322,13 @@ export async function PUT(
     );
 
     return NextResponse.json(
-      { error: "Unable to update word list." },
-      { status: 500 }
+      {
+        error:
+          "Unable to update word list.",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
@@ -213,16 +339,28 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
 ) {
   try {
-    const { id } = await context.params;
-    const wordListId = Number(id);
+    const { id } =
+      await context.params;
 
-    if (!Number.isInteger(wordListId) || wordListId <= 0) {
+    const wordListId =
+      getWordListId(id);
+
+    if (wordListId === null) {
       return NextResponse.json(
-        { error: "Invalid word list ID." },
-        { status: 400 }
+        {
+          error:
+            "Invalid word list ID.",
+        },
+        {
+          status: 400,
+        }
       );
     }
 
@@ -235,8 +373,13 @@ export async function DELETE(
 
     if (!existingList) {
       return NextResponse.json(
-        { error: "Word list not found." },
-        { status: 404 }
+        {
+          error:
+            "Word list not found.",
+        },
+        {
+          status: 404,
+        }
       );
     }
 
@@ -247,7 +390,8 @@ export async function DELETE(
     });
 
     return NextResponse.json({
-      message: "Word list deleted successfully.",
+      message:
+        "Word list deleted successfully.",
     });
   } catch (error) {
     console.error(
@@ -256,8 +400,13 @@ export async function DELETE(
     );
 
     return NextResponse.json(
-      { error: "Unable to delete word list." },
-      { status: 500 }
+      {
+        error:
+          "Unable to delete word list.",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

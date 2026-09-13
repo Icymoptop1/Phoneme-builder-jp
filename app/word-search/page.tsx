@@ -258,17 +258,18 @@ export default function WordSearchPage() {
     useState<GridSize>(6);
 
   const [puzzle, setPuzzle] =
-    useState<WordSearchPuzzle>(() =>
-      generateWordSearch(
-        6,
-        [],
-        phonemes.map(
-          (phoneme) =>
-            phoneme.symbol
-        ),
-        "EASY"
-      )
-    );
+    useState<WordSearchPuzzle>({
+      grid: Array.from(
+        { length: 6 },
+        () =>
+          Array.from(
+            { length: 6 },
+            () => "·"
+          )
+      ),
+      words: [],
+      placements: [],
+    });
 
   const [
     selectionStart,
@@ -890,6 +891,7 @@ export default function WordSearchPage() {
               size,
               theme: activityTheme,
               difficulty,
+              hintsEnabled,
             })
           }
         >
@@ -1365,14 +1367,14 @@ export default function WordSearchPage() {
                           )
                         }
                         title={
-                          getPhonemeHint(
-                            symbol
-                          )
+                          hintsEnabled
+                            ? getPhonemeHint(
+                                symbol
+                              )
+                            : undefined
                         }
                         aria-label={
-                          getPhonemeHint(
-                            symbol
-                          )
+                          `Phoneme ${symbol}`
                         }
                       >
                         /{symbol}/
