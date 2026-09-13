@@ -22,3 +22,13 @@ export * from './enums';
  * 
  */
 export type Word = Prisma.WordModel
+/**
+ * Model WordList
+ * 
+ */
+export type WordList = Prisma.WordListModel
+/**
+ * Model WordListWord
+ * 
+ */
+export type WordListWord = Prisma.WordListWordModel

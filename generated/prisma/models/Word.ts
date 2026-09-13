@@ -224,6 +224,7 @@ export type WordWhereInput = {
   hint?: Prisma.StringNullableFilter<"Word"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Word"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Word"> | Date | string
+  wordLists?: Prisma.WordListWordListRelationFilter
 }
 
 export type WordOrderByWithRelationInput = {
@@ -233,6 +234,7 @@ export type WordOrderByWithRelationInput = {
   hint?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  wordLists?: Prisma.WordListWordOrderByRelationAggregateInput
 }
 
 export type WordWhereUniqueInput = Prisma.AtLeast<{
@@ -245,6 +247,7 @@ export type WordWhereUniqueInput = Prisma.AtLeast<{
   hint?: Prisma.StringNullableFilter<"Word"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Word"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Word"> | Date | string
+  wordLists?: Prisma.WordListWordListRelationFilter
 }, "id">
 
 export type WordOrderByWithAggregationInput = {
@@ -279,6 +282,7 @@ export type WordCreateInput = {
   hint?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  wordLists?: Prisma.WordListWordCreateNestedManyWithoutWordInput
 }
 
 export type WordUncheckedCreateInput = {
@@ -288,6 +292,7 @@ export type WordUncheckedCreateInput = {
   hint?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  wordLists?: Prisma.WordListWordUncheckedCreateNestedManyWithoutWordInput
 }
 
 export type WordUpdateInput = {
@@ -296,6 +301,7 @@ export type WordUpdateInput = {
   hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  wordLists?: Prisma.WordListWordUpdateManyWithoutWordNestedInput
 }
 
 export type WordUncheckedUpdateInput = {
@@ -305,6 +311,7 @@ export type WordUncheckedUpdateInput = {
   hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  wordLists?: Prisma.WordListWordUncheckedUpdateManyWithoutWordNestedInput
 }
 
 export type WordCreateManyInput = {
@@ -368,6 +375,11 @@ export type WordSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type WordScalarRelationFilter = {
+  is?: Prisma.WordWhereInput
+  isNot?: Prisma.WordWhereInput
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -388,6 +400,99 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type WordCreateNestedOneWithoutWordListsInput = {
+  create?: Prisma.XOR<Prisma.WordCreateWithoutWordListsInput, Prisma.WordUncheckedCreateWithoutWordListsInput>
+  connectOrCreate?: Prisma.WordCreateOrConnectWithoutWordListsInput
+  connect?: Prisma.WordWhereUniqueInput
+}
+
+export type WordUpdateOneRequiredWithoutWordListsNestedInput = {
+  create?: Prisma.XOR<Prisma.WordCreateWithoutWordListsInput, Prisma.WordUncheckedCreateWithoutWordListsInput>
+  connectOrCreate?: Prisma.WordCreateOrConnectWithoutWordListsInput
+  upsert?: Prisma.WordUpsertWithoutWordListsInput
+  connect?: Prisma.WordWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WordUpdateToOneWithWhereWithoutWordListsInput, Prisma.WordUpdateWithoutWordListsInput>, Prisma.WordUncheckedUpdateWithoutWordListsInput>
+}
+
+export type WordCreateWithoutWordListsInput = {
+  english: string
+  phonemes: string
+  hint?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type WordUncheckedCreateWithoutWordListsInput = {
+  id?: number
+  english: string
+  phonemes: string
+  hint?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type WordCreateOrConnectWithoutWordListsInput = {
+  where: Prisma.WordWhereUniqueInput
+  create: Prisma.XOR<Prisma.WordCreateWithoutWordListsInput, Prisma.WordUncheckedCreateWithoutWordListsInput>
+}
+
+export type WordUpsertWithoutWordListsInput = {
+  update: Prisma.XOR<Prisma.WordUpdateWithoutWordListsInput, Prisma.WordUncheckedUpdateWithoutWordListsInput>
+  create: Prisma.XOR<Prisma.WordCreateWithoutWordListsInput, Prisma.WordUncheckedCreateWithoutWordListsInput>
+  where?: Prisma.WordWhereInput
+}
+
+export type WordUpdateToOneWithWhereWithoutWordListsInput = {
+  where?: Prisma.WordWhereInput
+  data: Prisma.XOR<Prisma.WordUpdateWithoutWordListsInput, Prisma.WordUncheckedUpdateWithoutWordListsInput>
+}
+
+export type WordUpdateWithoutWordListsInput = {
+  english?: Prisma.StringFieldUpdateOperationsInput | string
+  phonemes?: Prisma.StringFieldUpdateOperationsInput | string
+  hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WordUncheckedUpdateWithoutWordListsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  english?: Prisma.StringFieldUpdateOperationsInput | string
+  phonemes?: Prisma.StringFieldUpdateOperationsInput | string
+  hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type WordCountOutputType
+ */
+
+export type WordCountOutputType = {
+  wordLists: number
+}
+
+export type WordCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  wordLists?: boolean | WordCountOutputTypeCountWordListsArgs
+}
+
+/**
+ * WordCountOutputType without action
+ */
+export type WordCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WordCountOutputType
+   */
+  select?: Prisma.WordCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * WordCountOutputType without action
+ */
+export type WordCountOutputTypeCountWordListsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WordListWordWhereInput
+}
 
 
 export type WordSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -397,6 +502,8 @@ export type WordSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   hint?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  wordLists?: boolean | Prisma.Word$wordListsArgs<ExtArgs>
+  _count?: boolean | Prisma.WordCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["word"]>
 
 export type WordSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -427,10 +534,18 @@ export type WordSelectScalar = {
 }
 
 export type WordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "english" | "phonemes" | "hint" | "createdAt" | "updatedAt", ExtArgs["result"]["word"]>
+export type WordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  wordLists?: boolean | Prisma.Word$wordListsArgs<ExtArgs>
+  _count?: boolean | Prisma.WordCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type WordIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type WordIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $WordPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Word"
-  objects: {}
+  objects: {
+    wordLists: Prisma.$WordListWordPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     english: string
@@ -832,6 +947,7 @@ readonly fields: WordFieldRefs;
  */
 export interface Prisma__WordClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  wordLists<T extends Prisma.Word$wordListsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Word$wordListsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WordListWordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -884,6 +1000,10 @@ export type WordFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
+  /**
    * Filter, which Word to fetch.
    */
   where: Prisma.WordWhereUniqueInput
@@ -902,6 +1022,10 @@ export type WordFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
+  /**
    * Filter, which Word to fetch.
    */
   where: Prisma.WordWhereUniqueInput
@@ -919,6 +1043,10 @@ export type WordFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Word
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
   /**
    * Filter, which Word to fetch.
    */
@@ -968,6 +1096,10 @@ export type WordFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
+  /**
    * Filter, which Word to fetch.
    */
   where?: Prisma.WordWhereInput
@@ -1015,6 +1147,10 @@ export type WordFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Word
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
   /**
    * Filter, which Words to fetch.
    */
@@ -1064,6 +1200,10 @@ export type WordCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
+  /**
    * The data needed to create a Word.
    */
   data: Prisma.XOR<Prisma.WordCreateInput, Prisma.WordUncheckedCreateInput>
@@ -1109,6 +1249,10 @@ export type WordUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Word
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
   /**
    * The data needed to update a Word.
    */
@@ -1176,6 +1320,10 @@ export type WordUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
+  /**
    * The filter to search for the Word to update in case it exists.
    */
   where: Prisma.WordWhereUniqueInput
@@ -1202,6 +1350,10 @@ export type WordDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
+  /**
    * Filter which Word to delete.
    */
   where: Prisma.WordWhereUniqueInput
@@ -1222,6 +1374,30 @@ export type WordDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * Word.wordLists
+ */
+export type Word$wordListsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WordListWord
+   */
+  select?: Prisma.WordListWordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WordListWord
+   */
+  omit?: Prisma.WordListWordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordListWordInclude<ExtArgs> | null
+  where?: Prisma.WordListWordWhereInput
+  orderBy?: Prisma.WordListWordOrderByWithRelationInput | Prisma.WordListWordOrderByWithRelationInput[]
+  cursor?: Prisma.WordListWordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WordListWordScalarFieldEnum | Prisma.WordListWordScalarFieldEnum[]
+}
+
+/**
  * Word without action
  */
 export type WordDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1233,4 +1409,8 @@ export type WordDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Word
    */
   omit?: Prisma.WordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WordInclude<ExtArgs> | null
 }

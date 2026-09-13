@@ -397,7 +397,9 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Word: 'Word'
+  Word: 'Word',
+  WordList: 'WordList',
+  WordListWord: 'WordListWord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -413,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "word"
+    modelProps: "word" | "wordList" | "wordListWord"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -491,6 +493,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WordList: {
+      payload: Prisma.$WordListPayload<ExtArgs>
+      fields: Prisma.WordListFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WordListFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WordListFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>
+        }
+        findFirst: {
+          args: Prisma.WordListFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WordListFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>
+        }
+        findMany: {
+          args: Prisma.WordListFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>[]
+        }
+        create: {
+          args: Prisma.WordListCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>
+        }
+        createMany: {
+          args: Prisma.WordListCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WordListCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>[]
+        }
+        delete: {
+          args: Prisma.WordListDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>
+        }
+        update: {
+          args: Prisma.WordListUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>
+        }
+        deleteMany: {
+          args: Prisma.WordListDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WordListUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WordListUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>[]
+        }
+        upsert: {
+          args: Prisma.WordListUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListPayload>
+        }
+        aggregate: {
+          args: Prisma.WordListAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWordList>
+        }
+        groupBy: {
+          args: Prisma.WordListGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WordListGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WordListCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WordListCountAggregateOutputType> | number
+        }
+      }
+    }
+    WordListWord: {
+      payload: Prisma.$WordListWordPayload<ExtArgs>
+      fields: Prisma.WordListWordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WordListWordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WordListWordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>
+        }
+        findFirst: {
+          args: Prisma.WordListWordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WordListWordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>
+        }
+        findMany: {
+          args: Prisma.WordListWordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>[]
+        }
+        create: {
+          args: Prisma.WordListWordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>
+        }
+        createMany: {
+          args: Prisma.WordListWordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WordListWordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>[]
+        }
+        delete: {
+          args: Prisma.WordListWordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>
+        }
+        update: {
+          args: Prisma.WordListWordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>
+        }
+        deleteMany: {
+          args: Prisma.WordListWordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WordListWordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WordListWordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>[]
+        }
+        upsert: {
+          args: Prisma.WordListWordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WordListWordPayload>
+        }
+        aggregate: {
+          args: Prisma.WordListWordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWordListWord>
+        }
+        groupBy: {
+          args: Prisma.WordListWordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WordListWordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WordListWordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WordListWordCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -537,6 +687,26 @@ export const WordScalarFieldEnum = {
 } as const
 
 export type WordScalarFieldEnum = (typeof WordScalarFieldEnum)[keyof typeof WordScalarFieldEnum]
+
+
+export const WordListScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WordListScalarFieldEnum = (typeof WordListScalarFieldEnum)[keyof typeof WordListScalarFieldEnum]
+
+
+export const WordListWordScalarFieldEnum = {
+  id: 'id',
+  wordId: 'wordId',
+  wordListId: 'wordListId'
+} as const
+
+export type WordListWordScalarFieldEnum = (typeof WordListWordScalarFieldEnum)[keyof typeof WordListWordScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -740,6 +910,8 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   word?: Prisma.WordOmit
+  wordList?: Prisma.WordListOmit
+  wordListWord?: Prisma.WordListWordOmit
 }
 
 /* Types for Logging */

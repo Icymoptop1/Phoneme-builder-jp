@@ -8,10 +8,34 @@ datasource db {
 }
 
 model Word {
-  id        Int      @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   english   String
   phonemes  String
   hint      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  wordLists WordListWord[]
+}
+
+model WordList {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  words       WordListWord[]
+}
+
+model WordListWord {
+  id         Int      @id @default(autoincrement())
+
+  word       Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  wordId     Int
+
+  wordList   WordList @relation(fields: [wordListId], references: [id], onDelete: Cascade)
+  wordListId Int
+
+  @@unique([wordId, wordListId])
 }

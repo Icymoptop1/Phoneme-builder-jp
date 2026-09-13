@@ -9,4 +9,6 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Word'
+export type * from './models/WordList'
+export type * from './models/WordListWord'
 export type * from './commonInputTypes'

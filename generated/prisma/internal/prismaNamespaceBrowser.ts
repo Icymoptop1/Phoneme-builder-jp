@@ -51,7 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Word: 'Word'
+  Word: 'Word',
+  WordList: 'WordList',
+  WordListWord: 'WordListWord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -77,6 +79,26 @@ export const WordScalarFieldEnum = {
 } as const
 
 export type WordScalarFieldEnum = (typeof WordScalarFieldEnum)[keyof typeof WordScalarFieldEnum]
+
+
+export const WordListScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WordListScalarFieldEnum = (typeof WordListScalarFieldEnum)[keyof typeof WordListScalarFieldEnum]
+
+
+export const WordListWordScalarFieldEnum = {
+  id: 'id',
+  wordId: 'wordId',
+  wordListId: 'wordListId'
+} as const
+
+export type WordListWordScalarFieldEnum = (typeof WordListWordScalarFieldEnum)[keyof typeof WordListWordScalarFieldEnum]
 
 
 export const SortOrder = {
