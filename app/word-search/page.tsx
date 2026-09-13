@@ -1,12 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import GenerateButton from "../components/GenerateButton";
 
 import {
-  allWords,
   phonemes,
+} from "../data/phonemes";
+
+import type {
+  PhonemeWord,
 } from "../data/phonemes";
 
 import {
@@ -19,8 +25,8 @@ import {
 } from "../utils/generateWordSearchHTML";
 
 /*
- * Determines how many words are used
- * for each grid size.
+ * Maximum number of words requested
+ * for each supported grid size.
  */
 const gridConfigurations = {
   6: 5,
@@ -32,23 +38,94 @@ const gridConfigurations = {
 type GridSize =
   keyof typeof gridConfigurations;
 
+type ActivityDifficulty =
+  | "EASY"
+  | "MEDIUM"
+  | "HARD";
+
 type FeedbackType =
   | "success"
   | "error"
   | "";
 
+type DatabaseWord = {
+  id: number;
+  english: string;
+  phonemes: string;
+  hint?: string | null;
+};
+
+type ActivityWord = {
+  word: DatabaseWord;
+};
+
+type ActivityWordList = {
+  id: number;
+  name: string;
+  description?: string | null;
+  words: ActivityWord[];
+};
+
+type WordSearchActivity = {
+  id: number;
+  name: string;
+  type: "WORD_SEARCH";
+  difficulty:
+    ActivityDifficulty;
+  gridSize?: number | null;
+  hintsEnabled: boolean;
+  theme: string;
+  settings?: string | null;
+  wordList: ActivityWordList;
+};
+
+type LoadedPhonemeWord =
+  PhonemeWord & {
+    id: number;
+    hint?: string | null;
+  };
+
+function getDifficultyWordCount(
+  size: GridSize,
+  difficulty: ActivityDifficulty,
+  availableCount: number
+) {
+  const maximum =
+    gridConfigurations[size];
+
+  const requested =
+    difficulty === "EASY"
+      ? Math.ceil(maximum * 0.6)
+      : difficulty === "MEDIUM"
+        ? Math.ceil(maximum * 0.8)
+        : maximum;
+
+  return Math.min(
+    requested,
+    availableCount
+  );
+}
+
 /*
- * Creates a random word list.
+ * Selects a random subset from the
+ * database words linked to the activity.
  */
 function getRandomWords(
+  words: LoadedPhonemeWord[],
   count: number
 ) {
-  return [...allWords]
+  return [...words]
     .sort(
       () =>
         Math.random() - 0.5
     )
-    .slice(0, count);
+    .slice(
+      0,
+      Math.min(
+        count,
+        words.length
+      )
+    );
 }
 
 /*
@@ -124,26 +201,72 @@ function calculateLine(
 }
 
 export default function WordSearchPage() {
+  const [
+    activities,
+    setActivities,
+  ] = useState<
+    WordSearchActivity[]
+  >([]);
+
+  const [
+    selectedActivityId,
+    setSelectedActivityId,
+  ] = useState<number | null>(
+    null
+  );
+
+  const [
+    availableWords,
+    setAvailableWords,
+  ] = useState<
+    LoadedPhonemeWord[]
+  >([]);
+
+  const [
+    selectedWordListName,
+    setSelectedWordListName,
+  ] = useState("");
+
+  const [
+    difficulty,
+    setDifficulty,
+  ] = useState<ActivityDifficulty>(
+    "EASY"
+  );
+
+  const [
+    hintsEnabled,
+    setHintsEnabled,
+  ] = useState(true);
+
+  const [
+    activityTheme,
+    setActivityTheme,
+  ] = useState("light");
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
+
+  const [
+    loadError,
+    setLoadError,
+  ] = useState("");
+
   const [size, setSize] =
     useState<GridSize>(6);
 
-  /*
-   * Start with a deterministic puzzle.
-   * Random puzzles are generated from
-   * button presses after the page loads.
-   */
   const [puzzle, setPuzzle] =
     useState<WordSearchPuzzle>(() =>
       generateWordSearch(
         6,
-        allWords.slice(
-          0,
-          gridConfigurations[6]
-        ),
+        [],
         phonemes.map(
           (phoneme) =>
             phoneme.symbol
-        )
+        ),
+        "EASY"
       )
     );
 
@@ -182,55 +305,318 @@ export default function WordSearchPage() {
     useState<FeedbackType>("");
 
   const wordCount =
-    gridConfigurations[size];
+    getDifficultyWordCount(
+      size,
+      difficulty,
+      availableWords.length
+    );
 
-  /*
-   * Generates a new random puzzle.
-   */
-  const createNewPuzzle = (
-    newSize: GridSize = size
+  const resetGameState = () => {
+    setSelectionStart(null);
+    setSelectedCells([]);
+    setFoundWords([]);
+    setFoundCells([]);
+    setFeedback("");
+    setFeedbackType("");
+  };
+
+  const buildPuzzle = (
+    words: LoadedPhonemeWord[],
+    newSize: GridSize,
+    newDifficulty:
+      ActivityDifficulty =
+        difficulty
   ) => {
     const count =
-      gridConfigurations[
-        newSize
-      ];
+      getDifficultyWordCount(
+        newSize,
+        newDifficulty,
+        words.length
+      );
 
     const selectedWords =
-      getRandomWords(count);
+      getRandomWords(
+        words,
+        count
+      );
+
+    const symbols =
+      Array.from(
+        new Set(
+          words.flatMap(
+            (word) =>
+              word.phonemes
+          )
+        )
+      );
 
     const newPuzzle =
       generateWordSearch(
         newSize,
         selectedWords,
-        phonemes.map(
-          (phoneme) =>
-            phoneme.symbol
-        )
+        symbols.length > 0
+          ? symbols
+          : phonemes.map(
+              (phoneme) =>
+                phoneme.symbol
+            ),
+        newDifficulty
       );
 
     setPuzzle(newPuzzle);
-
-    setSelectionStart(null);
-    setSelectedCells([]);
-    setFoundWords([]);
-    setFoundCells([]);
-
-    setFeedback("");
-    setFeedbackType("");
+    resetGameState();
   };
 
+  const loadActivity = async (
+    activityId: number
+  ) => {
+    setLoading(true);
+    setLoadError("");
+
+    try {
+      const response =
+        await fetch(
+          `/api/activities/${activityId}`
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          "Unable to load activity."
+        );
+      }
+
+      const activity =
+        (await response.json()) as WordSearchActivity;
+
+      const convertedWords:
+        LoadedPhonemeWord[] =
+        activity.wordList.words
+          .map(
+            ({ word }) => {
+              try {
+                const parsed =
+                  JSON.parse(
+                    word.phonemes
+                  );
+
+                if (
+                  !Array.isArray(
+                    parsed
+                  ) ||
+                  parsed.length === 0 ||
+                  !parsed.every(
+                    (item) =>
+                      typeof item ===
+                        "string" &&
+                      item.trim().length >
+                        0
+                  )
+                ) {
+                  return null;
+                }
+
+                return {
+                  id: word.id,
+                  english:
+                    word.english,
+                  phonemes:
+                    parsed,
+                  hint:
+                    word.hint ??
+                    null,
+                } as LoadedPhonemeWord;
+              } catch {
+                return null;
+              }
+            }
+          )
+          .filter(
+            (
+              word
+            ): word is LoadedPhonemeWord =>
+              word !== null
+          );
+
+      setSelectedActivityId(
+        activity.id
+      );
+
+      setAvailableWords(
+        convertedWords
+      );
+
+      setSelectedWordListName(
+        activity.wordList.name
+      );
+
+      setDifficulty(
+        activity.difficulty
+      );
+
+      setHintsEnabled(
+        activity.hintsEnabled
+      );
+
+      setActivityTheme(
+        activity.theme
+      );
+
+      const savedGridSize =
+        Number(
+          activity.gridSize
+        );
+
+      const nextSize =
+        [6, 8, 10, 12].includes(
+          savedGridSize
+        )
+          ? (savedGridSize as GridSize)
+          : 6;
+
+      setSize(nextSize);
+
+      if (
+        convertedWords.length ===
+        0
+      ) {
+        setPuzzle(
+          generateWordSearch(
+            nextSize,
+            [],
+            phonemes.map(
+              (phoneme) =>
+                phoneme.symbol
+            ),
+            activity.difficulty
+          )
+        );
+
+        resetGameState();
+
+        setLoadError(
+          "This activity's word list does not contain any valid words."
+        );
+
+        return;
+      }
+
+      buildPuzzle(
+        convertedWords,
+        nextSize,
+        activity.difficulty
+      );
+    } catch (error) {
+      setLoadError(
+        error instanceof Error
+          ? error.message
+          : "Unable to load activity."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const loadActivities =
+      async () => {
+        setLoading(true);
+        setLoadError("");
+
+        try {
+          const response =
+            await fetch(
+              "/api/activities"
+            );
+
+          if (!response.ok) {
+            throw new Error(
+              "Unable to load activities."
+            );
+          }
+
+          const data =
+            (await response.json()) as WordSearchActivity[];
+
+          const wordSearchActivities =
+            data.filter(
+              (activity) =>
+                activity.type ===
+                "WORD_SEARCH"
+            );
+
+          setActivities(
+            wordSearchActivities
+          );
+
+          if (
+            wordSearchActivities.length >
+            0
+          ) {
+            await loadActivity(
+              wordSearchActivities[0]
+                .id
+            );
+          } else {
+            setLoadError(
+              "No WORD_SEARCH activities exist yet. Create one on the Activities page."
+            );
+            setLoading(false);
+          }
+        } catch (error) {
+          setLoadError(
+            error instanceof Error
+              ? error.message
+              : "Unable to load activities."
+          );
+          setLoading(false);
+        }
+      };
+
+    loadActivities();
+  }, []);
+
   /*
-   * Changes grid size and creates
-   * a completely new puzzle.
+   * Generates a new random puzzle
+   * from the selected database word list.
    */
+  const createNewPuzzle = (
+    newSize: GridSize = size
+  ) => {
+    if (
+      availableWords.length ===
+      0
+    ) {
+      setFeedback(
+        "The selected activity does not have any valid database words."
+      );
+      setFeedbackType(
+        "error"
+      );
+      return;
+    }
+
+    buildPuzzle(
+      availableWords,
+      newSize,
+      difficulty
+    );
+  };
+
   const changeGridSize = (
     newSize: GridSize
   ) => {
     setSize(newSize);
 
-    createNewPuzzle(
-      newSize
-    );
+    if (
+      availableWords.length >
+      0
+    ) {
+      buildPuzzle(
+        availableWords,
+        newSize,
+        difficulty
+      );
+    }
   };
 
   /*
@@ -492,8 +878,8 @@ export default function WordSearchPage() {
 
           <p>
             Configure and preview a
-            phoneme-based Word Search
-            classroom activity.
+            database-driven phoneme Word
+            Search classroom activity.
           </p>
         </div>
 
@@ -515,7 +901,47 @@ export default function WordSearchPage() {
       <div className="builder-settings">
 
         <div className="setting-group">
+          <label
+            htmlFor="activity-select"
+          >
+            Saved Activity
+          </label>
 
+          <select
+            id="activity-select"
+            value={
+              selectedActivityId ??
+              ""
+            }
+            onChange={(event) =>
+              loadActivity(
+                Number(
+                  event.target.value
+                )
+              )
+            }
+            disabled={
+              loading ||
+              activities.length ===
+                0
+            }
+          >
+            {activities.map(
+              (activity) => (
+                <option
+                  key={activity.id}
+                  value={
+                    activity.id
+                  }
+                >
+                  {activity.name}
+                </option>
+              )
+            )}
+          </select>
+        </div>
+
+        <div className="setting-group">
           <label
             htmlFor="grid-size"
           >
@@ -535,24 +961,27 @@ export default function WordSearchPage() {
                 ) as GridSize
               )
             }
+            disabled={
+              availableWords.length ===
+              0
+            }
           >
             <option value={6}>
-              6 × 6 — 5 words
+              6 × 6 — up to 5 words
             </option>
 
             <option value={8}>
-              8 × 8 — 8 words
+              8 × 8 — up to 8 words
             </option>
 
             <option value={10}>
-              10 × 10 — 12 words
+              10 × 10 — up to 12 words
             </option>
 
             <option value={12}>
-              12 × 12 — 15 words
+              12 × 12 — up to 15 words
             </option>
           </select>
-
         </div>
 
         <div className="setting-summary">
@@ -561,7 +990,7 @@ export default function WordSearchPage() {
           </strong>
 
           <span>
-            hidden words
+            words at {difficulty.toLowerCase()} difficulty
           </span>
         </div>
 
@@ -571,10 +1000,179 @@ export default function WordSearchPage() {
           onClick={() =>
             createNewPuzzle()
           }
+          disabled={
+            availableWords.length ===
+            0
+          }
         >
           ↻ Generate New Puzzle
         </button>
 
+      </div>
+
+      {loadError && (
+        <div
+          className="search-feedback error"
+          role="alert"
+        >
+          {loadError}
+        </div>
+      )}
+
+      {!loadError &&
+        selectedActivityId && (
+          <div
+            className="builder-panel"
+            style={{
+              marginTop: "1.5rem",
+            }}
+          >
+            <div
+              className="preview-header"
+              style={{
+                marginBottom: "1rem",
+              }}
+            >
+              <div>
+                <h3>
+                  Activity Details
+                </h3>
+
+                <p>
+                  Settings loaded from the
+                  selected database activity.
+                </p>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(150px, 1fr))",
+                gap: "1rem",
+              }}
+            >
+              <div
+                className="setting-summary"
+                style={{
+                  alignItems: "flex-start",
+                }}
+              >
+                <span>
+                  Word List
+                </span>
+
+                <strong
+                  style={{
+                    fontSize: "1rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {selectedWordListName}
+                </strong>
+              </div>
+
+              <div
+                className="setting-summary"
+                style={{
+                  alignItems: "flex-start",
+                }}
+              >
+                <span>
+                  Stored Words
+                </span>
+
+                <strong
+                  style={{
+                    fontSize: "1rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {availableWords.length}
+                </strong>
+              </div>
+
+              <div
+                className="setting-summary"
+                style={{
+                  alignItems: "flex-start",
+                }}
+              >
+                <span>
+                  Difficulty
+                </span>
+
+                <strong
+                  style={{
+                    fontSize: "1rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {difficulty}
+                </strong>
+              </div>
+
+              <div
+                className="setting-summary"
+                style={{
+                  alignItems: "flex-start",
+                }}
+              >
+                <span>
+                  Hints
+                </span>
+
+                <strong
+                  style={{
+                    fontSize: "1rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {hintsEnabled
+                    ? "Enabled"
+                    : "Disabled"}
+                </strong>
+              </div>
+
+              <div
+                className="setting-summary"
+                style={{
+                  alignItems: "flex-start",
+                }}
+              >
+                <span>
+                  Theme
+                </span>
+
+                <strong
+                  style={{
+                    fontSize: "1rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {activityTheme}
+                </strong>
+              </div>
+            </div>
+          </div>
+        )}
+
+      <div
+        className="word-search-instructions"
+        style={{
+          marginTop: "1rem",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <strong>
+          Difficulty behaviour:
+        </strong>{" "}
+        {difficulty === "EASY"
+          ? "Fewer words using horizontal and vertical placement only."
+          : difficulty === "MEDIUM"
+            ? "More words with horizontal, vertical and diagonal placement."
+            : "Maximum word count with all eight placement directions, including reversed directions."}
       </div>
 
       {/* MAIN PAGE LAYOUT */}
@@ -863,13 +1461,13 @@ export default function WordSearchPage() {
               }
             >
               <div
-                  className="progress-fill"
-                  style={{
-                   width:
+                className="progress-fill"
+                style={{
+                  width:
                     puzzle.words.length > 0
                       ? `${(foundWords.length / puzzle.words.length) * 100}%`
-                    : "0%",
-                  }}
+                      : "0%",
+                }}
               />
             </div>
 

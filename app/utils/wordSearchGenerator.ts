@@ -1,66 +1,133 @@
-import type { PhonemeWord } from "../data/phonemes";
+import type {
+  PhonemeWord,
+} from "../data/phonemes";
 
-export interface PlacedWord {
+export type WordSearchDifficulty =
+  | "EASY"
+  | "MEDIUM"
+  | "HARD";
+
+export type PlacedWord = {
   word: PhonemeWord;
   cells: string[];
-}
+};
 
-export interface WordSearchPuzzle {
+export type WordSearchPuzzle = {
   grid: string[][];
   words: PhonemeWord[];
   placements: PlacedWord[];
-}
+};
 
-const directions: [number, number][] = [
-  [0, 1],
-  [1, 0],
-  [0, -1],
-  [-1, 0],
-  [1, 1],
-  [1, -1],
-  [-1, 1],
-  [-1, -1],
+type Direction = {
+  row: number;
+  col: number;
+};
+
+const easyDirections: Direction[] = [
+  { row: 0, col: 1 },
+  { row: 1, col: 0 },
 ];
 
-function shuffle<T>(items: T[]): T[] {
-  return [...items].sort(() => Math.random() - 0.5);
+const mediumDirections: Direction[] = [
+  { row: 0, col: 1 },
+  { row: 1, col: 0 },
+  { row: 1, col: 1 },
+  { row: 1, col: -1 },
+];
+
+const hardDirections: Direction[] = [
+  { row: 0, col: 1 },
+  { row: 0, col: -1 },
+  { row: 1, col: 0 },
+  { row: -1, col: 0 },
+  { row: 1, col: 1 },
+  { row: 1, col: -1 },
+  { row: -1, col: 1 },
+  { row: -1, col: -1 },
+];
+
+function getDirections(
+  difficulty: WordSearchDifficulty
+): Direction[] {
+  if (difficulty === "EASY") {
+    return easyDirections;
+  }
+
+  if (difficulty === "HARD") {
+    return hardDirections;
+  }
+
+  return mediumDirections;
 }
 
-function cellKey(row: number, col: number): string {
-  return `${row}-${col}`;
+function shuffle<T>(
+  values: T[]
+): T[] {
+  const copy = [...values];
+
+  for (
+    let index =
+      copy.length - 1;
+    index > 0;
+    index--
+  ) {
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+          (index + 1)
+      );
+
+    [
+      copy[index],
+      copy[randomIndex],
+    ] = [
+      copy[randomIndex],
+      copy[index],
+    ];
+  }
+
+  return copy;
 }
 
-function canPlace(
-  grid: string[][],
-  phonemes: string[],
+function canPlaceWord(
+  grid: (string | null)[][],
+  word: PhonemeWord,
   startRow: number,
   startCol: number,
-  rowDirection: number,
-  colDirection: number
-): boolean {
-  const size = grid.length;
-
-  for (let index = 0; index < phonemes.length; index++) {
+  direction: Direction
+) {
+  for (
+    let index = 0;
+    index <
+    word.phonemes.length;
+    index++
+  ) {
     const row =
-      startRow + rowDirection * index;
+      startRow +
+      direction.row *
+        index;
 
     const col =
-      startCol + colDirection * index;
+      startCol +
+      direction.col *
+        index;
 
     if (
       row < 0 ||
-      row >= size ||
+      row >= grid.length ||
       col < 0 ||
-      col >= size
+      col >= grid.length
     ) {
       return false;
     }
 
-    const existing = grid[row][col];
+    const existing =
+      grid[row][col];
 
     if (
-      existing !== "" &&
-      existing !== phonemes[index]
+      existing !== null &&
+      existing !==
+        word.phonemes[index]
     ) {
       return false;
     }
@@ -69,83 +136,195 @@ function canPlace(
   return true;
 }
 
+function placeWord(
+  grid: (string | null)[][],
+  word: PhonemeWord,
+  startRow: number,
+  startCol: number,
+  direction: Direction
+): string[] {
+  const cells: string[] = [];
+
+  word.phonemes.forEach(
+    (symbol, index) => {
+      const row =
+        startRow +
+        direction.row *
+          index;
+
+      const col =
+        startCol +
+        direction.col *
+          index;
+
+      grid[row][col] =
+        symbol;
+
+      cells.push(
+        `${row}-${col}`
+      );
+    }
+  );
+
+  return cells;
+}
+
 export function generateWordSearch(
   size: number,
-  words: PhonemeWord[],
-  fillerPhonemes: string[]
+  requestedWords: PhonemeWord[],
+  fillerPhonemes: string[],
+  difficulty:
+    WordSearchDifficulty =
+      "MEDIUM"
 ): WordSearchPuzzle {
-  const grid: string[][] =
+  const grid:
+    (string | null)[][] =
     Array.from(
       { length: size },
-      () => Array(size).fill("")
+      () =>
+        Array.from(
+          { length: size },
+          () => null
+        )
     );
 
-  const placements: PlacedWord[] = [];
+  const placements:
+    PlacedWord[] = [];
 
-  for (const word of shuffle(words)) {
+  const placedWords:
+    PhonemeWord[] = [];
+
+  const directions =
+    getDirections(
+      difficulty
+    );
+
+  /*
+   * Longer words are attempted
+   * first because they are harder
+   * to fit after the grid fills.
+   */
+  const words =
+    shuffle(
+      requestedWords
+    ).sort(
+      (first, second) =>
+        second.phonemes
+          .length -
+        first.phonemes.length
+    );
+
+  for (const word of words) {
+    if (
+      word.phonemes.length ===
+        0 ||
+      word.phonemes.length >
+        size
+    ) {
+      continue;
+    }
+
     let placed = false;
 
-    for (const [rowDirection, colDirection] of shuffle(directions)) {
-      if (placed) break;
-
-      const positions: [number, number][] = [];
-
-      for (let row = 0; row < size; row++) {
-        for (let col = 0; col < size; col++) {
-          positions.push([row, col]);
-        }
-      }
-
-      for (const [startRow, startCol] of shuffle(positions)) {
-        if (
-          !canPlace(
-            grid,
-            word.phonemes,
-            startRow,
-            startCol,
-            rowDirection,
-            colDirection
+    /*
+     * Try many random positions so
+     * different generated puzzles
+     * remain visually varied.
+     */
+    for (
+      let attempt = 0;
+      attempt < 250;
+      attempt++
+    ) {
+      const direction =
+        directions[
+          Math.floor(
+            Math.random() *
+              directions.length
           )
-        ) {
-          continue;
-        }
+        ];
 
-        const cells: string[] = [];
-
-        word.phonemes.forEach(
-          (phoneme, index) => {
-            const row =
-              startRow +
-              rowDirection * index;
-
-            const col =
-              startCol +
-              colDirection * index;
-
-            grid[row][col] = phoneme;
-            cells.push(cellKey(row, col));
-          }
+      const startRow =
+        Math.floor(
+          Math.random() *
+            size
         );
 
-        placements.push({
-          word,
-          cells,
-        });
+      const startCol =
+        Math.floor(
+          Math.random() *
+            size
+        );
 
-        placed = true;
-        break;
+      if (
+        !canPlaceWord(
+          grid,
+          word,
+          startRow,
+          startCol,
+          direction
+        )
+      ) {
+        continue;
       }
+
+      const cells =
+        placeWord(
+          grid,
+          word,
+          startRow,
+          startCol,
+          direction
+        );
+
+      placements.push({
+        word,
+        cells,
+      });
+
+      placedWords.push(
+        word
+      );
+
+      placed = true;
+      break;
+    }
+
+    /*
+     * If a requested word cannot
+     * fit safely, it is omitted
+     * rather than corrupting the
+     * puzzle.
+     */
+    if (!placed) {
+      continue;
     }
   }
 
-  for (let row = 0; row < size; row++) {
-    for (let col = 0; col < size; col++) {
-      if (grid[row][col] === "") {
+  const fillers =
+    fillerPhonemes.length > 0
+      ? fillerPhonemes
+      : ["ə"];
+
+  for (
+    let row = 0;
+    row < size;
+    row++
+  ) {
+    for (
+      let col = 0;
+      col < size;
+      col++
+    ) {
+      if (
+        grid[row][col] ===
+        null
+      ) {
         grid[row][col] =
-          fillerPhonemes[
+          fillers[
             Math.floor(
               Math.random() *
-              fillerPhonemes.length
+                fillers.length
             )
           ];
       }
@@ -153,10 +332,9 @@ export function generateWordSearch(
   }
 
   return {
-    grid,
-    words: placements.map(
-      (placement) => placement.word
-    ),
+    grid:
+      grid as string[][],
+    words: placedWords,
     placements,
   };
 }
