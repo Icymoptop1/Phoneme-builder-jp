@@ -1,0 +1,249 @@
+.page {
+  width: 100%;
+}
+
+.hero {
+  padding: 72px 24px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.heroContent {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.hero h1 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.intro {
+  max-width: 700px;
+  margin: 22px 0 0;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  opacity: 0.8;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.primaryButton {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.secondaryButton {
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  color: inherit;
+}
+
+.primaryButton:hover,
+.secondaryButton:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+
+.sectionHeading {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+.sectionHeading h2,
+.activityContent h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+}
+
+.sectionHeading p,
+.activityContent > div > p {
+  margin: 0;
+  line-height: 1.7;
+  opacity: 0.8;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+  padding: 26px;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  background: rgba(128, 128, 128, 0.04);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(37, 99, 235, 0.7);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background: rgba(37, 99, 235, 0.14);
+  color: #3b82f6;
+  font-weight: 800;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  flex: 1;
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+.cardLink {
+  margin-top: 22px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.activitySection {
+  padding: 64px 24px;
+  border-top: 1px solid rgba(128, 128, 128, 0.25);
+  background: rgba(128, 128, 128, 0.04);
+}
+
+.activityContent {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.feature {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  border-radius: 10px;
+}
+
+.feature > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.14);
+  color: #22c55e;
+  font-weight: 800;
+}
+
+.feature strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.feature p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+
+@media (max-width: 850px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .activityContent {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .hero {
+    padding-top: 52px;
+    padding-bottom: 52px;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero,
+  .section,
+  .activitySection {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}

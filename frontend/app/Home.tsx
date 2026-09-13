@@ -1,59 +1,122 @@
 import Link from "next/link";
+import styles from "./Home.module.css";
 
 export default function Home() {
   return (
-    <section className="page-shell">
-      <div className="page-card">
-        <h1>Phoneme Learning Activity Builder</h1>
+    <div className={styles.page}>
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <span className={styles.eyebrow}>PHONEME ACTIVITY BUILDER</span>
 
-        <p>
-          Create phoneme-based learning activities using stored word lists and
-          activity configurations.
-        </p>
+          <h1>Build phoneme activities for the classroom</h1>
 
-        <div className="home-actions">
-          <Link href="/wordle" className="button-link">
-            Open Wordle
-          </Link>
-
-          <Link href="/word-search" className="button-link">
-            Open Word Search
-          </Link>
-        </div>
-
-        <section>
-          <h2>Teacher Tools</h2>
-
-          <p>
-            Manage words, word lists and saved activity configurations through
-            the database-backed administration pages.
+          <p className={styles.intro}>
+            Create interactive phoneme-based Wordle and Word Search activities
+            using stored word lists and saved activity configurations.
           </p>
 
-          <div className="home-actions">
-            <Link href="/words" className="button-link">
-              Manage Words
+          <div className={styles.actions}>
+            <Link href="/wordle" className={styles.primaryButton}>
+              Open Wordle
             </Link>
 
-            <Link href="/word-lists" className="button-link">
-              Manage Word Lists
-            </Link>
-
-            <Link href="/activities" className="button-link">
-              Manage Activities
+            <Link href="/word-search" className={styles.secondaryButton}>
+              Open Word Search
             </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section>
-          <h2>Activity Generation</h2>
-
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}>
+          <span className={styles.eyebrow}>TEACHER TOOLS</span>
+          <h2>Manage your learning content</h2>
           <p>
-            Wordle and Word Search activities use word lists stored in the
-            database and can be exported as standalone HTML activities for
-            classroom use.
+            Add phoneme words, organise them into reusable word lists, and
+            create saved activity configurations through the database-backed
+            administration tools.
           </p>
-        </section>
-      </div>
-    </section>
+        </div>
+
+        <div className={styles.cardGrid}>
+          <Link href="/words" className={styles.card}>
+            <div className={styles.cardIcon}>Aa</div>
+            <h3>Manage Words</h3>
+            <p>
+              Add, edit and remove English words, phoneme sequences and
+              optional hints.
+            </p>
+            <span className={styles.cardLink}>Open Words →</span>
+          </Link>
+
+          <Link href="/word-lists" className={styles.card}>
+            <div className={styles.cardIcon}>☷</div>
+            <h3>Manage Word Lists</h3>
+            <p>
+              Group stored phoneme words into reusable collections for
+              classroom activities.
+            </p>
+            <span className={styles.cardLink}>Open Word Lists →</span>
+          </Link>
+
+          <Link href="/activities" className={styles.card}>
+            <div className={styles.cardIcon}>⚙</div>
+            <h3>Manage Activities</h3>
+            <p>
+              Configure Wordle and Word Search activities with difficulty,
+              hints and activity settings.
+            </p>
+            <span className={styles.cardLink}>Open Activities →</span>
+          </Link>
+        </div>
+      </section>
+
+      <section className={styles.activitySection}>
+        <div className={styles.activityContent}>
+          <div>
+            <span className={styles.eyebrow}>ACTIVITY GENERATION</span>
+            <h2>Database-driven classroom activities</h2>
+
+            <p>
+              Wordle and Word Search activities use word lists stored in the
+              database rather than fixed example data. Saved configurations can
+              be loaded into the activity builders and exported as standalone
+              HTML files for classroom use.
+            </p>
+          </div>
+
+          <div className={styles.featureList}>
+            <div className={styles.feature}>
+              <span>✓</span>
+              <div>
+                <strong>Stored phoneme words</strong>
+                <p>Activity content comes from the backend database.</p>
+              </div>
+            </div>
+
+            <div className={styles.feature}>
+              <span>✓</span>
+              <div>
+                <strong>Reusable activity settings</strong>
+                <p>
+                  Save multiple Wordle and Word Search configurations.
+                </p>
+              </div>
+            </div>
+
+            <div className={styles.feature}>
+              <span>✓</span>
+              <div>
+                <strong>Standalone HTML export</strong>
+                <p>
+                  Generate playable classroom activities that run in a normal
+                  browser.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
