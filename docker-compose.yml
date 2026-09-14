@@ -1,0 +1,27 @@
+services:
+  api:
+    build:
+      context: ./api
+    container_name: phoneme-api
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: file:/app/data/dev.db
+    volumes:
+      - sqlite_data:/app/data
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        API_INTERNAL_URL: http://api:4000
+    container_name: phoneme-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      API_INTERNAL_URL: http://api:4000
+    depends_on:
+      - api
+
+volumes:
+  sqlite_data:
