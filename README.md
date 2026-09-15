@@ -542,3 +542,9 @@ This ensures generated activities use teacher-managed database content rather th
 ## Assessment Project
 
 This project was developed as part of CSE3CWA coursework and extends the original frontend activity builder with backend API functionality, database persistence, CRUD management, database-driven activity generation, Docker containerisation and AWS deployment.
+
+## GitHub Repository
+
+The source code for this project is available at:
+
+https://github.com/Icymoptop1/Phoneme-builder-jp
