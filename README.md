@@ -1,8 +1,10 @@
 # Phoneme Learning Activity Builder
 
-The Phoneme Learning Activity Builder is a full-stack educational web application designed to allow teachers to create and manage phoneme-based Wordle and Word Search learning activities.
+The Phoneme Learning Activity Builder is a full-stack educational web application designed to allow teachers to create, manage and generate phoneme-based Wordle and Word Search learning activities.
 
-The application was developed using Next.js, React, TypeScript, Prisma and SQLite. Activity content is stored in a database and accessed through server-side API routes, allowing teachers to create reusable words, word lists and activity configurations.
+The application was developed using Next.js, React, TypeScript, Prisma and SQLite. Activity content is stored in a database and accessed through a separate backend API, allowing teachers to create reusable words, word lists and activity configurations.
+
+The application is containerised using Docker and Docker Compose and has been deployed and tested on an AWS Academy EC2 instance.
 
 ## Project Features
 
@@ -17,7 +19,7 @@ Each stored word contains:
 - An optional hint
 - Creation and update metadata
 
-Phonemes are stored as sequences and may contain multi-character phoneme representations where required.
+Phonemes are stored as sequences and support multi-character phoneme representations where required.
 
 ### Word Lists
 
@@ -31,7 +33,7 @@ Teachers can:
 - Update list details and contents
 - Delete lists
 
-Word lists provide the source content for Wordle and Word Search activities.
+Word lists provide the database-driven source content for Wordle and Word Search activities.
 
 ### Activity Management
 
@@ -55,9 +57,9 @@ Word Search activities can store a grid size of 6×6, 8×8, 10×10 or 12×12.
 
 The Wordle activity uses phonemes rather than standard alphabetic character entry.
 
-The target word is obtained from the database word list associated with the selected activity.
+The target word is obtained from the stored word list associated with the selected activity. The activity therefore uses database content rather than a fixed example word.
 
-Difficulty affects the phoneme keyboard:
+Difficulty affects the available phoneme keyboard:
 
 - Easy provides the target phonemes with a small number of distractors.
 - Medium provides additional distractor phonemes.
@@ -85,6 +87,7 @@ The activity supports:
 - Completion feedback
 - Optional phoneme hints
 - Keyboard navigation
+- Responsive grid layouts
 - Light and dark themes
 
 ### Standalone HTML Generation
@@ -99,7 +102,9 @@ The generated files contain the required:
 - Phoneme data
 - Activity configuration
 
-This allows the generated learning activity to run directly in a normal web browser without requiring the main application to remain open.
+This allows a generated learning activity to run directly in a normal web browser without requiring the main application to remain open.
+
+The generated activity uses the words and settings associated with the selected database-backed activity configuration.
 
 ## Technology Stack
 
@@ -111,39 +116,87 @@ The project uses:
 - Prisma ORM
 - SQLite
 - Next.js Route Handlers
+- Docker
+- Docker Compose
+- AWS Academy EC2
 - HTML, CSS and JavaScript for standalone activity generation
 
-## Application Structure
+## System Architecture
 
-The main application is organised into the following areas:
+The application is separated into frontend and backend services.
 
 ```text
-app/
-├── api/
-│   ├── activities/
-│   ├── word-lists/
-│   └── words/
-├── about/
-├── activities/
-├── health/
-├── settings/
-├── word-lists/
-├── word-search/
-├── wordle/
-├── words/
-└── page.tsx
-
-components/
-lib/
-prisma/
-public/
+User Browser
+     |
+     v
+Next.js Frontend
+Port 3000
+     |
+     | /api requests
+     v
+Next.js Backend API
+Port 4000
+     |
+     v
+Prisma ORM
+     |
+     v
+SQLite Database
 ```
 
-The frontend communicates with Next.js server-side Route Handlers. These routes use Prisma to read and modify data stored in the SQLite database.
+When deployed with Docker Compose:
+
+```text
+AWS EC2
+|
+├── phoneme-frontend
+│   └── Next.js frontend - port 3000
+│
+├── phoneme-api
+│   └── Next.js API - port 4000
+│
+└── sqlite_data
+    └── Persistent Docker volume
+```
+
+The frontend uses a Next.js rewrite to forward `/api/*` requests to the backend API service.
+
+Within Docker, the frontend communicates with the API using the Docker Compose service hostname `api`.
+
+## Repository Structure
+
+```text
+frontenddesign/
+├── .gitignore
+├── docker-compose.yml
+├── README.md
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── data/
+│   ├── public/
+│   ├── utils/
+│   ├── Dockerfile
+│   ├── .dockerignore
+│   ├── package.json
+│   └── next.config.ts
+│
+└── api/
+    ├── app/
+    ├── generated/
+    ├── lib/
+    ├── prisma/
+    ├── Dockerfile
+    ├── .dockerignore
+    ├── package.json
+    ├── next.config.ts
+    └── prisma7.config.ts
+```
 
 ## API Routes
 
-The application provides REST-style API routes for the main stored resources.
+The backend provides REST-style API routes for the main stored resources.
 
 ### Words
 
@@ -181,7 +234,14 @@ DELETE /api/activities/:id
 GET /health
 ```
 
-A successful health check returns a HTTP 200 response indicating that the application is running.
+A successful health check returns HTTP `200` with:
+
+```json
+{
+  "status": "ok",
+  "service": "phoneme-learning-activity-builder"
+}
+```
 
 ## Validation and Error Handling
 
@@ -192,6 +252,7 @@ Validation includes:
 - Required word and activity names
 - Valid phoneme arrays
 - Non-empty phoneme values
+- Multi-character phoneme support
 - Valid database IDs
 - Existing word references
 - Existing word list references
@@ -215,79 +276,211 @@ The primary database models are:
 - `WordListWord`
 - `Activity`
 
-`WordListWord` provides the relationship between stored words and reusable word lists.
+`WordListWord` provides the many-to-many relationship between stored words and reusable word lists.
 
-An `Activity` references a `WordList`, allowing stored word lists to drive generated activity content rather than relying on a single fixed example.
+An `Activity` references a `WordList`, allowing stored word lists to drive generated activity content rather than relying on a fixed example.
 
-## Seed Data
+### Seed Data
 
-The database includes a seed script containing 90 example phoneme words divided into:
+The supplied seed script contains 90 example phoneme words divided into:
 
-- 3 Phoneme Words
-- 4 Phoneme Words
-- 5 Phoneme Words
+- 30 three-phoneme words
+- 30 four-phoneme words
+- 30 five-phoneme words
 
-This provides sample content while still allowing teachers to create and manage their own words and word lists.
+This provides example content while still allowing teachers to create and manage their own words and word lists.
 
-## Getting Started
+## Local Development
 
-### Install Dependencies
+The frontend and API are separate Next.js applications and should be run from their respective directories.
 
-From the project directory, run:
+### Backend API
+
+Open a terminal in:
+
+```text
+api/
+```
+
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-### Environment Configuration
-
-The application requires a `DATABASE_URL` environment variable for SQLite.
-
-The local `.env` configuration uses:
+Create an `.env` file containing:
 
 ```text
 DATABASE_URL="file:./dev.db"
 ```
 
-### Prisma
-
-Generate the Prisma client when required:
+Generate the Prisma client:
 
 ```bash
-npx prisma generate
+npm run prisma:generate
 ```
 
-Apply database migrations when required:
+Apply the database migrations:
 
 ```bash
-npx prisma migrate dev
+npm run prisma:migrate
 ```
 
-Seed the database with the supplied example phoneme data:
+Seed the database:
 
 ```bash
-npx prisma db seed
+npm run prisma:seed
 ```
 
-### Run the Development Server
-
-Start the application with:
+Start the API:
 
 ```bash
 npm run dev
 ```
 
-Then open:
+The API runs on:
+
+```text
+http://localhost:4000
+```
+
+The health endpoint is:
+
+```text
+http://localhost:4000/health
+```
+
+### Frontend
+
+Open a second terminal in:
+
+```text
+frontend/
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the frontend:
+
+```bash
+npm run dev
+```
+
+The frontend runs on:
 
 ```text
 http://localhost:3000
 ```
 
-The health endpoint can be checked at:
+During local development, the frontend forwards API requests to the backend running on port `4000`.
+
+## Docker Deployment
+
+Docker Compose is used to build and run the frontend and API as separate containers.
+
+From the repository root:
+
+```bash
+docker compose build
+```
+
+Start the containers:
+
+```bash
+docker compose up -d
+```
+
+Check their status:
+
+```bash
+docker compose ps
+```
+
+The deployed services are available at:
 
 ```text
-http://localhost:3000/health
+Frontend: http://localhost:3000
+API:      http://localhost:4000
+Health:   http://localhost:4000/health
 ```
+
+Stop the containers with:
+
+```bash
+docker compose down
+```
+
+### Database Persistence
+
+The Docker deployment uses the named volume:
+
+```text
+sqlite_data
+```
+
+The SQLite database is stored in this persistent volume rather than inside the disposable API container.
+
+As a result, database records remain available when the containers are stopped, removed and recreated with:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+Using `docker compose down -v` will also remove the named volume and should only be used when the stored Docker database is intentionally being deleted.
+
+## AWS Academy EC2 Deployment
+
+The Dockerised application was deployed and tested on an AWS Academy EC2 instance running Amazon Linux 2023.
+
+The deployment process was:
+
+1. Launch an Amazon Linux 2023 EC2 instance.
+2. Configure SSH access.
+3. Install Git and Docker Engine.
+4. Install Docker Compose.
+5. Clone the GitHub repository.
+6. Build the Docker images.
+7. Start the services using Docker Compose.
+8. Configure the EC2 security group for the required application ports.
+9. Verify the frontend, API, health endpoint and database-backed functionality.
+
+The application is started on EC2 from the repository directory using:
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+Container status can be checked using:
+
+```bash
+docker compose ps
+```
+
+The backend can be tested from the EC2 instance using:
+
+```bash
+curl http://localhost:4000/health
+```
+
+The frontend can be tested using:
+
+```bash
+curl -I http://localhost:3000
+```
+
+The EC2 security group used for the deployment permits:
+
+- TCP port `22` for SSH administration
+- TCP port `3000` for the frontend
+- TCP port `4000` for the backend API and health endpoint
+
+SSH access should be restricted to the administrator's IP address.
 
 ## Accessibility and Interface
 
@@ -300,6 +493,46 @@ The application includes accessibility and usability features such as:
 - Descriptive labels
 - Optional phoneme hints
 - Visual activity feedback
+- Keyboard-accessible Word Search interaction
+
+## Assessment 2 Functionality
+
+The Assessment 2 version extends the original frontend activity builder with:
+
+- Separate backend API
+- SQLite database persistence
+- Prisma ORM
+- CRUD management for words
+- CRUD management for word lists
+- CRUD management for activities
+- Database-driven Wordle generation
+- Database-driven Word Search generation
+- Server-side validation and error handling
+- Standalone HTML activity generation
+- Docker containerisation
+- Persistent Docker database storage
+- AWS Academy EC2 deployment
+- `/health` endpoint
+
+The activity generation workflow is:
+
+```text
+Saved Activity
+      |
+      v
+Linked Word List
+      |
+      v
+Stored Database Words
+      |
+      v
+Wordle / Word Search
+      |
+      v
+Standalone HTML Activity
+```
+
+This ensures generated activities use teacher-managed database content rather than fixed example data.
 
 ## Creator
 
@@ -308,4 +541,4 @@ The application includes accessibility and usability features such as:
 
 ## Assessment Project
 
-This project was developed as part of CSE3CWA coursework and extends the original frontend activity builder with database persistence, backend API functionality, CRUD management and database-driven activity generation.
+This project was developed as part of CSE3CWA coursework and extends the original frontend activity builder with backend API functionality, database persistence, CRUD management, database-driven activity generation, Docker containerisation and AWS deployment.
