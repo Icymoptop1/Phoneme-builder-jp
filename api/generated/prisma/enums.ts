@@ -24,3 +24,20 @@ export const Difficulty = {
 } as const
 
 export type Difficulty = (typeof Difficulty)[keyof typeof Difficulty]
+
+
+export const UsageEventType = {
+  PAGE_VIEW: 'PAGE_VIEW',
+  PAGE_TIME: 'PAGE_TIME',
+  GENERATION: 'GENERATION'
+} as const
+
+export type UsageEventType = (typeof UsageEventType)[keyof typeof UsageEventType]
+
+
+export const UsageResult = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+} as const
+
+export type UsageResult = (typeof UsageResult)[keyof typeof UsageResult]

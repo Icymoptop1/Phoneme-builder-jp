@@ -285,6 +285,7 @@ export type ActivityWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Activity"> | Date | string
   wordListId?: Prisma.IntFilter<"Activity"> | number
   wordList?: Prisma.XOR<Prisma.WordListScalarRelationFilter, Prisma.WordListWhereInput>
+  usageRecords?: Prisma.UsageRecordListRelationFilter
 }
 
 export type ActivityOrderByWithRelationInput = {
@@ -301,6 +302,7 @@ export type ActivityOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   wordListId?: Prisma.SortOrder
   wordList?: Prisma.WordListOrderByWithRelationInput
+  usageRecords?: Prisma.UsageRecordOrderByRelationAggregateInput
 }
 
 export type ActivityWhereUniqueInput = Prisma.AtLeast<{
@@ -320,6 +322,7 @@ export type ActivityWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Activity"> | Date | string
   wordListId?: Prisma.IntFilter<"Activity"> | number
   wordList?: Prisma.XOR<Prisma.WordListScalarRelationFilter, Prisma.WordListWhereInput>
+  usageRecords?: Prisma.UsageRecordListRelationFilter
 }, "id">
 
 export type ActivityOrderByWithAggregationInput = {
@@ -372,6 +375,7 @@ export type ActivityCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   wordList: Prisma.WordListCreateNestedOneWithoutActivitiesInput
+  usageRecords?: Prisma.UsageRecordCreateNestedManyWithoutActivityInput
 }
 
 export type ActivityUncheckedCreateInput = {
@@ -387,6 +391,7 @@ export type ActivityUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   wordListId: number
+  usageRecords?: Prisma.UsageRecordUncheckedCreateNestedManyWithoutActivityInput
 }
 
 export type ActivityUpdateInput = {
@@ -401,6 +406,7 @@ export type ActivityUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wordList?: Prisma.WordListUpdateOneRequiredWithoutActivitiesNestedInput
+  usageRecords?: Prisma.UsageRecordUpdateManyWithoutActivityNestedInput
 }
 
 export type ActivityUncheckedUpdateInput = {
@@ -416,6 +422,7 @@ export type ActivityUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wordListId?: Prisma.IntFieldUpdateOperationsInput | number
+  usageRecords?: Prisma.UsageRecordUncheckedUpdateManyWithoutActivityNestedInput
 }
 
 export type ActivityCreateManyInput = {
@@ -469,6 +476,11 @@ export type ActivityListRelationFilter = {
 
 export type ActivityOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ActivityNullableScalarRelationFilter = {
+  is?: Prisma.ActivityWhereInput | null
+  isNot?: Prisma.ActivityWhereInput | null
 }
 
 export type ActivityCountOrderByAggregateInput = {
@@ -572,20 +584,28 @@ export type ActivityUncheckedUpdateManyWithoutWordListNestedInput = {
   deleteMany?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
 }
 
+export type ActivityCreateNestedOneWithoutUsageRecordsInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutUsageRecordsInput, Prisma.ActivityUncheckedCreateWithoutUsageRecordsInput>
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutUsageRecordsInput
+  connect?: Prisma.ActivityWhereUniqueInput
+}
+
+export type ActivityUpdateOneWithoutUsageRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutUsageRecordsInput, Prisma.ActivityUncheckedCreateWithoutUsageRecordsInput>
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutUsageRecordsInput
+  upsert?: Prisma.ActivityUpsertWithoutUsageRecordsInput
+  disconnect?: Prisma.ActivityWhereInput | boolean
+  delete?: Prisma.ActivityWhereInput | boolean
+  connect?: Prisma.ActivityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ActivityUpdateToOneWithWhereWithoutUsageRecordsInput, Prisma.ActivityUpdateWithoutUsageRecordsInput>, Prisma.ActivityUncheckedUpdateWithoutUsageRecordsInput>
+}
+
 export type EnumActivityTypeFieldUpdateOperationsInput = {
   set?: $Enums.ActivityType
 }
 
 export type EnumDifficultyFieldUpdateOperationsInput = {
   set?: $Enums.Difficulty
-}
-
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -603,6 +623,7 @@ export type ActivityCreateWithoutWordListInput = {
   settings?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  usageRecords?: Prisma.UsageRecordCreateNestedManyWithoutActivityInput
 }
 
 export type ActivityUncheckedCreateWithoutWordListInput = {
@@ -617,6 +638,7 @@ export type ActivityUncheckedCreateWithoutWordListInput = {
   settings?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  usageRecords?: Prisma.UsageRecordUncheckedCreateNestedManyWithoutActivityInput
 }
 
 export type ActivityCreateOrConnectWithoutWordListInput = {
@@ -662,6 +684,80 @@ export type ActivityScalarWhereInput = {
   wordListId?: Prisma.IntFilter<"Activity"> | number
 }
 
+export type ActivityCreateWithoutUsageRecordsInput = {
+  name: string
+  type: $Enums.ActivityType
+  difficulty: $Enums.Difficulty
+  maxAttempts?: number | null
+  gridSize?: number | null
+  hintsEnabled?: boolean
+  theme?: string
+  settings?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  wordList: Prisma.WordListCreateNestedOneWithoutActivitiesInput
+}
+
+export type ActivityUncheckedCreateWithoutUsageRecordsInput = {
+  id?: number
+  name: string
+  type: $Enums.ActivityType
+  difficulty: $Enums.Difficulty
+  maxAttempts?: number | null
+  gridSize?: number | null
+  hintsEnabled?: boolean
+  theme?: string
+  settings?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  wordListId: number
+}
+
+export type ActivityCreateOrConnectWithoutUsageRecordsInput = {
+  where: Prisma.ActivityWhereUniqueInput
+  create: Prisma.XOR<Prisma.ActivityCreateWithoutUsageRecordsInput, Prisma.ActivityUncheckedCreateWithoutUsageRecordsInput>
+}
+
+export type ActivityUpsertWithoutUsageRecordsInput = {
+  update: Prisma.XOR<Prisma.ActivityUpdateWithoutUsageRecordsInput, Prisma.ActivityUncheckedUpdateWithoutUsageRecordsInput>
+  create: Prisma.XOR<Prisma.ActivityCreateWithoutUsageRecordsInput, Prisma.ActivityUncheckedCreateWithoutUsageRecordsInput>
+  where?: Prisma.ActivityWhereInput
+}
+
+export type ActivityUpdateToOneWithWhereWithoutUsageRecordsInput = {
+  where?: Prisma.ActivityWhereInput
+  data: Prisma.XOR<Prisma.ActivityUpdateWithoutUsageRecordsInput, Prisma.ActivityUncheckedUpdateWithoutUsageRecordsInput>
+}
+
+export type ActivityUpdateWithoutUsageRecordsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+  difficulty?: Prisma.EnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty
+  maxAttempts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  gridSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  hintsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  theme?: Prisma.StringFieldUpdateOperationsInput | string
+  settings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  wordList?: Prisma.WordListUpdateOneRequiredWithoutActivitiesNestedInput
+}
+
+export type ActivityUncheckedUpdateWithoutUsageRecordsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+  difficulty?: Prisma.EnumDifficultyFieldUpdateOperationsInput | $Enums.Difficulty
+  maxAttempts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  gridSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  hintsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  theme?: Prisma.StringFieldUpdateOperationsInput | string
+  settings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  wordListId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
 export type ActivityCreateManyWordListInput = {
   id?: number
   name: string
@@ -687,6 +783,7 @@ export type ActivityUpdateWithoutWordListInput = {
   settings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usageRecords?: Prisma.UsageRecordUpdateManyWithoutActivityNestedInput
 }
 
 export type ActivityUncheckedUpdateWithoutWordListInput = {
@@ -701,6 +798,7 @@ export type ActivityUncheckedUpdateWithoutWordListInput = {
   settings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usageRecords?: Prisma.UsageRecordUncheckedUpdateManyWithoutActivityNestedInput
 }
 
 export type ActivityUncheckedUpdateManyWithoutWordListInput = {
@@ -718,6 +816,35 @@ export type ActivityUncheckedUpdateManyWithoutWordListInput = {
 }
 
 
+/**
+ * Count Type ActivityCountOutputType
+ */
+
+export type ActivityCountOutputType = {
+  usageRecords: number
+}
+
+export type ActivityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  usageRecords?: boolean | ActivityCountOutputTypeCountUsageRecordsArgs
+}
+
+/**
+ * ActivityCountOutputType without action
+ */
+export type ActivityCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityCountOutputType
+   */
+  select?: Prisma.ActivityCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ActivityCountOutputType without action
+ */
+export type ActivityCountOutputTypeCountUsageRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UsageRecordWhereInput
+}
+
 
 export type ActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -733,6 +860,8 @@ export type ActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   updatedAt?: boolean
   wordListId?: boolean
   wordList?: boolean | Prisma.WordListDefaultArgs<ExtArgs>
+  usageRecords?: boolean | Prisma.Activity$usageRecordsArgs<ExtArgs>
+  _count?: boolean | Prisma.ActivityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["activity"]>
 
 export type ActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -785,6 +914,8 @@ export type ActivitySelectScalar = {
 export type ActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "difficulty" | "maxAttempts" | "gridSize" | "hintsEnabled" | "theme" | "settings" | "createdAt" | "updatedAt" | "wordListId", ExtArgs["result"]["activity"]>
 export type ActivityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   wordList?: boolean | Prisma.WordListDefaultArgs<ExtArgs>
+  usageRecords?: boolean | Prisma.Activity$usageRecordsArgs<ExtArgs>
+  _count?: boolean | Prisma.ActivityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ActivityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   wordList?: boolean | Prisma.WordListDefaultArgs<ExtArgs>
@@ -797,6 +928,7 @@ export type $ActivityPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "Activity"
   objects: {
     wordList: Prisma.$WordListPayload<ExtArgs>
+    usageRecords: Prisma.$UsageRecordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1206,6 +1338,7 @@ readonly fields: ActivityFieldRefs;
 export interface Prisma__ActivityClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   wordList<T extends Prisma.WordListDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WordListDefaultArgs<ExtArgs>>): Prisma.Prisma__WordListClient<runtime.Types.Result.GetResult<Prisma.$WordListPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  usageRecords<T extends Prisma.Activity$usageRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$usageRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsageRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1643,6 +1776,30 @@ export type ActivityDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Activities to delete.
    */
   limit?: number
+}
+
+/**
+ * Activity.usageRecords
+ */
+export type Activity$usageRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UsageRecord
+   */
+  select?: Prisma.UsageRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UsageRecord
+   */
+  omit?: Prisma.UsageRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UsageRecordInclude<ExtArgs> | null
+  where?: Prisma.UsageRecordWhereInput
+  orderBy?: Prisma.UsageRecordOrderByWithRelationInput | Prisma.UsageRecordOrderByWithRelationInput[]
+  cursor?: Prisma.UsageRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UsageRecordScalarFieldEnum | Prisma.UsageRecordScalarFieldEnum[]
 }
 
 /**

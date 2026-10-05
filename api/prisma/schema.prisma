@@ -52,6 +52,30 @@ enum Difficulty {
   HARD
 }
 
+enum UsageEventType {
+  PAGE_VIEW
+  PAGE_TIME
+  GENERATION
+}
+
+enum UsageResult {
+  SUCCESS
+  FAILED
+}
+
+model UsageRecord {
+  id           Int            @id @default(autoincrement())
+  activityType ActivityType?
+  eventType    UsageEventType
+  result       UsageResult?
+  durationMs   Int?
+  activityId   Int?
+  message      String?
+  createdAt    DateTime       @default(now())
+
+  activity     Activity?      @relation(fields: [activityId], references: [id], onDelete: SetNull)
+}
+
 model Activity {
   id           Int          @id @default(autoincrement())
   name         String
@@ -67,4 +91,5 @@ model Activity {
 
   wordList     WordList     @relation(fields: [wordListId], references: [id], onDelete: Cascade)
   wordListId   Int
+  usageRecords UsageRecord[]
 }

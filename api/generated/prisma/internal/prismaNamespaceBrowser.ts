@@ -54,6 +54,7 @@ export const ModelName = {
   Word: 'Word',
   WordList: 'WordList',
   WordListWord: 'WordListWord',
+  UsageRecord: 'UsageRecord',
   Activity: 'Activity'
 } as const
 
@@ -100,6 +101,20 @@ export const WordListWordScalarFieldEnum = {
 } as const
 
 export type WordListWordScalarFieldEnum = (typeof WordListWordScalarFieldEnum)[keyof typeof WordListWordScalarFieldEnum]
+
+
+export const UsageRecordScalarFieldEnum = {
+  id: 'id',
+  activityType: 'activityType',
+  eventType: 'eventType',
+  result: 'result',
+  durationMs: 'durationMs',
+  activityId: 'activityId',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type UsageRecordScalarFieldEnum = (typeof UsageRecordScalarFieldEnum)[keyof typeof UsageRecordScalarFieldEnum]
 
 
 export const ActivityScalarFieldEnum = {
