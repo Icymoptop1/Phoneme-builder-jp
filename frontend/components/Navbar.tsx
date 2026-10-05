@@ -46,6 +46,14 @@ export default function Navbar() {
         </Link>
 
         <Link
+          href="/dashboard"
+          className={active("/dashboard")}
+          onClick={closeMenu}
+        >
+          Dashboard
+        </Link>
+
+        <Link
           href="/wordle"
           className={active("/wordle")}
           onClick={closeMenu}
