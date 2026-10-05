@@ -861,6 +861,80 @@ export default function WordSearchPage() {
       : symbol;
   };
 
+// =======================================================
+// GENERATE HTML + RECORD USAGE
+// =======================================================
+
+const handleGenerateHTML = async () => {
+  try {
+    if (!selectedActivityId) {
+      throw new Error(
+        "No Word Search activity is selected."
+      );
+    }
+
+    if (puzzle.words.length === 0) {
+      throw new Error(
+        "The Word Search puzzle contains no valid words."
+      );
+    }
+
+    generateWordSearchHTML({
+      puzzle,
+      size,
+      theme: activityTheme,
+      difficulty,
+      hintsEnabled,
+    });
+
+    await fetch("/api/usage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        activityType: "WORD_SEARCH",
+        eventType: "GENERATION",
+        result: "SUCCESS",
+        activityId: selectedActivityId,
+        message: "Generated Word Search HTML successfully.",
+      }),
+    });
+  } catch (error) {
+    try {
+      await fetch("/api/usage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          activityType: "WORD_SEARCH",
+          eventType: "GENERATION",
+          result: "FAILED",
+          activityId: selectedActivityId,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Word Search HTML generation failed.",
+        }),
+      });
+    } catch {
+      console.error(
+        "Unable to record failed Word Search generation."
+      );
+    }
+
+    setFeedback(
+      error instanceof Error
+        ? error.message
+        : "Unable to generate Word Search HTML."
+    );
+
+    setFeedbackType("error");
+  }
+};
+
+
   return (
     <section className="page">
 
@@ -884,17 +958,7 @@ export default function WordSearchPage() {
           </p>
         </div>
 
-        <GenerateButton
-          onClick={() =>
-            generateWordSearchHTML({
-              puzzle,
-              size,
-              theme: activityTheme,
-              difficulty,
-              hintsEnabled,
-            })
-          }
-        >
+        <GenerateButton onClick={handleGenerateHTML}>
           Generate HTML
         </GenerateButton>
 

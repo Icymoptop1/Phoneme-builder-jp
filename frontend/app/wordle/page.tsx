@@ -704,6 +704,68 @@ export default function WordlePage() {
     resetGame();
   };
 
+// =======================================================
+// GENERATE HTML + RECORD USAGE
+// =======================================================
+
+const handleGenerateHTML = async () => {
+  const activityId = Number(selectedActivityId);
+
+  if (!target) {
+    setMessage("No Wordle target word is available.");
+    return;
+  }
+
+  try {
+    generateWordleHTML({
+      target,
+      maxAttempts: attempts,
+      hintsEnabled,
+      theme: activityTheme,
+      keyboardPhonemes,
+    });
+
+    await fetch("/api/usage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        activityType: "WORDLE",
+        eventType: "GENERATION",
+        result: "SUCCESS",
+        activityId: activityId || null,
+        message: `Generated Wordle HTML for ${target.english}`,
+      }),
+    });
+  } catch (error) {
+    try {
+      await fetch("/api/usage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          activityType: "WORDLE",
+          eventType: "GENERATION",
+          result: "FAILED",
+          activityId: activityId || null,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Wordle HTML generation failed.",
+        }),
+      });
+    } catch {
+      console.error(
+        "Unable to record failed Wordle generation."
+      );
+    }
+
+    setMessage("Unable to generate Wordle HTML.");
+  }
+};
+
   // =======================================================
   // LOADING SCREEN
   // =======================================================
@@ -782,19 +844,7 @@ export default function WordlePage() {
           </p>
         </div>
 
-        <GenerateButton
-          onClick={() =>
-            generateWordleHTML({
-              target,
-              maxAttempts:
-                attempts,
-              hintsEnabled,
-              theme:
-                activityTheme,
-              keyboardPhonemes,
-            })
-          }
-        >
+        <GenerateButton onClick={handleGenerateHTML}>
           Generate HTML
         </GenerateButton>
 
