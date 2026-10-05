@@ -379,6 +379,10 @@ export default function WordlePage() {
     }
   }
 
+  useEffect(() => {
+  loadWordleActivities();
+}, []);
+
   // =======================================================
   // LOAD ONE ACTIVITY + ITS WORD LIST
   // =======================================================
