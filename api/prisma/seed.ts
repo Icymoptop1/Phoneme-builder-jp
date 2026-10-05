@@ -1,4 +1,10 @@
 import { prisma } from "../lib/prisma";
+import {
+  ActivityType,
+  UsageEventType,
+  UsageResult,
+} from "../generated/prisma/enums";
+
 
 type SeedWord = {
   english: string;
@@ -214,9 +220,67 @@ async function main() {
     }
   }
 
+  await seedSimulatedUsage();
+
   console.log("Seed complete.");
   console.log(`Total words in database: ${await prisma.word.count()}`);
   console.log(`Total word lists in database: ${await prisma.wordList.count()}`);
+  console.log(
+    `Total usage records in database: ${await prisma.usageRecord.count()}`
+  );
+}
+
+async function seedSimulatedUsage() {
+  const seedMarker = "Simulated usage data";
+
+  const existingSimulatedRecord =
+    await prisma.usageRecord.findFirst({
+      where: {
+        message: seedMarker,
+      },
+    });
+
+  if (existingSimulatedRecord) {
+    console.log("Simulated usage data already exists.");
+    return;
+  }
+
+  await prisma.usageRecord.createMany({
+    data: [
+      {
+        activityType: ActivityType.WORDLE,
+        eventType: UsageEventType.GENERATION,
+        result: UsageResult.SUCCESS,
+        message: seedMarker,
+      },
+      {
+        activityType: ActivityType.WORD_SEARCH,
+        eventType: UsageEventType.GENERATION,
+        result: UsageResult.SUCCESS,
+        message: seedMarker,
+      },
+      {
+        activityType: ActivityType.WORDLE,
+        eventType: UsageEventType.GENERATION,
+        result: UsageResult.FAILED,
+        message: seedMarker,
+      },
+      {
+        activityType: ActivityType.WORDLE,
+        eventType: UsageEventType.PAGE_TIME,
+        durationMs: 42000,
+        message: seedMarker,
+      },
+      {
+        activityType: ActivityType.WORD_SEARCH,
+        eventType: UsageEventType.PAGE_TIME,
+        durationMs: 58000,
+        message: seedMarker,
+      },
+    ],
+  });
+
+  console.log("Simulated usage data created.");
 }
 
 main()
