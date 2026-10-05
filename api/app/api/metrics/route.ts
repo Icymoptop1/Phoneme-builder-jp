@@ -68,12 +68,14 @@ export async function GET() {
       prisma.usageRecord.count({
         where: {
           activityType: ActivityType.WORDLE,
+          eventType: UsageEventType.GENERATION,
         },
       }),
 
       prisma.usageRecord.count({
         where: {
           activityType: ActivityType.WORD_SEARCH,
+          eventType: UsageEventType.GENERATION,
         },
       }),
 
