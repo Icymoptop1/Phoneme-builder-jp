@@ -294,8 +294,34 @@ export default function WordlePage() {
   // =======================================================
 
   useEffect(() => {
-    loadWordleActivities();
-  }, []);
+  const startedAt = Date.now();
+
+  return () => {
+    const durationMs = Date.now() - startedAt;
+
+    if (durationMs < 1000) {
+      return;
+    }
+
+    fetch("/api/usage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        activityType: "WORDLE",
+        eventType: "PAGE_TIME",
+        durationMs,
+        message: "Wordle page session",
+      }),
+      keepalive: true,
+    }).catch(() => {
+      console.error(
+        "Unable to record Wordle page time."
+      );
+    });
+  };
+}, []);
 
   // =======================================================
   // LOAD SAVED WORDLE ACTIVITIES
