@@ -725,13 +725,13 @@ The JMeter test plan is stored at:
 
 The staged local load tests produced the following results:
 
-| Load Level | Samples | Average Response | Maximum Response | Error Rate |
-|---|---:|---:|---:|---:|
-| x1 | 3 | 240 ms | 544 ms | 0.00% |
-| x10 | 30 | 20 ms | 41 ms | 0.00% |
-| x100 | 300 | 20 ms | 54 ms | 0.00% |
-| x1000 | 3,000 | 5,623 ms | 14,701 ms | 0.00% |
-| Extreme stress | 300,000 | 929 ms | 44,773 ms | 92.16% |
+|   Load Level   |   Samples  | Average Response | Maximum Response | Error Rate |
+|----------------|-----------:|-----------------:|-----------------:|-----------:|
+|     x1         |    3       |      240 ms      |       544 ms     |    0.00%   |
+|     x10        |    30      |      20 ms       |       41 ms      |    0.00%   |
+|     x100       |    300     |      20 ms       |       54 ms      |    0.00%   |
+|     x1000      |    3,000   |      5,623 ms    |       14,701 ms  |    0.00%   | 
+| Extreme stress |    300,000 |      929 ms      |       44,773 ms  |    92.16%  |
 
 The x10 and x100 stages remained responsive with no request errors.
 
