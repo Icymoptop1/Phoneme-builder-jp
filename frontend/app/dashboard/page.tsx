@@ -8,6 +8,7 @@ type Metrics = {
   totals: {
     words: number;
     wordLists: number;
+    emptyWordLists: number;
     activities: number;
     wordleActivities: number;
     wordSearchActivities: number;
@@ -108,6 +109,9 @@ export default function DashboardPage() {
   const hasFailedGenerations =
     metrics.generations.failed > 0;
 
+  const hasEmptyWordLists =
+    metrics.totals.emptyWordLists > 0;
+
   return (
     <main className={styles.dashboard}>
       <header className={styles.heading}>
@@ -165,21 +169,35 @@ export default function DashboardPage() {
       <section className={styles.alertSection}>
         <h2>Operational Status</h2>
 
-        {hasFailedGenerations ? (
+        {hasFailedGenerations && (
           <div
             className={`${styles.alert} ${styles.alertWarning}`}
             role="alert"
           >
-            <strong>Attention required:</strong>{" "}
+            <strong>Generation warning:</strong>{" "}
             {metrics.generations.failed} failed generation
             {metrics.generations.failed === 1 ? "" : "s"} recorded.
           </div>
-        ) : (
+        )}
+
+        {hasEmptyWordLists && (
+          <div
+            className={`${styles.alert} ${styles.alertWarning}`}
+            role="alert"
+          >
+            <strong>Word list warning:</strong>{" "}
+            {metrics.totals.emptyWordLists} empty word list
+            {metrics.totals.emptyWordLists === 1 ? "" : "s"} detected.
+          </div>
+        )}
+
+        {!hasFailedGenerations && !hasEmptyWordLists && (
           <div
             className={`${styles.alert} ${styles.alertOk}`}
           >
-            <strong>No generation failures detected.</strong>{" "}
-            Generation activity is operating normally.
+            <strong>No operational warnings detected.</strong>{" "}
+            Generation activity and stored word lists are operating
+            normally.
           </div>
         )}
       </section>
@@ -231,6 +249,11 @@ export default function DashboardPage() {
           <div className={styles.statRow}>
             <span>Total Words</span>
             <span>{metrics.totals.words}</span>
+          </div>
+
+          <div className={styles.statRow}>
+            <span>Empty Word Lists</span>
+            <span>{metrics.totals.emptyWordLists}</span>
           </div>
 
           <div className={styles.statRow}>

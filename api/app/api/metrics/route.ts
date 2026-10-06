@@ -11,6 +11,7 @@ export async function GET() {
     const [
       totalWords,
       totalWordLists,
+      emptyWordLists,
       totalActivities,
       wordleActivities,
       wordSearchActivities,
@@ -24,6 +25,14 @@ export async function GET() {
       prisma.word.count(),
 
       prisma.wordList.count(),
+
+      prisma.wordList.count({
+        where: {
+          words: {
+            none: {},
+          },
+        },
+      }),
 
       prisma.activity.count(),
 
@@ -91,13 +100,16 @@ export async function GET() {
       successfulGenerations + failedGenerations;
 
     const totalPageTime = pageTimeRecords.reduce(
-      (total, record) => total + (record.durationMs ?? 0),
+      (total, record) =>
+        total + (record.durationMs ?? 0),
       0
     );
 
     const averageTimeOnPageMs =
       pageTimeRecords.length > 0
-        ? Math.round(totalPageTime / pageTimeRecords.length)
+        ? Math.round(
+            totalPageTime / pageTimeRecords.length
+          )
         : 0;
 
     let mostUsedActivityType: string | null = null;
@@ -106,7 +118,10 @@ export async function GET() {
       mostUsedActivityType = "WORDLE";
     } else if (wordSearchUsage > wordleUsage) {
       mostUsedActivityType = "WORD_SEARCH";
-    } else if (wordleUsage > 0 && wordSearchUsage > 0) {
+    } else if (
+      wordleUsage > 0 &&
+      wordSearchUsage > 0
+    ) {
       mostUsedActivityType = "TIED";
     }
 
@@ -116,6 +131,7 @@ export async function GET() {
       totals: {
         words: totalWords,
         wordLists: totalWordLists,
+        emptyWordLists,
         activities: totalActivities,
         wordleActivities,
         wordSearchActivities,
@@ -132,18 +148,23 @@ export async function GET() {
         wordSearch: wordSearchUsage,
         mostUsedActivityType,
         averageTimeOnPageMs,
-        recordedPageSessions: pageTimeRecords.length,
+        recordedPageSessions:
+          pageTimeRecords.length,
       },
 
       recentUsage,
     });
   } catch (error) {
-    console.error("Failed to calculate dashboard metrics:", error);
+    console.error(
+      "Failed to calculate dashboard metrics:",
+      error
+    );
 
     return NextResponse.json(
       {
         systemStatus: "unhealthy",
-        error: "Failed to calculate dashboard metrics.",
+        error:
+          "Failed to calculate dashboard metrics.",
       },
       { status: 500 }
     );
